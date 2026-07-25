@@ -1,0 +1,31 @@
+<div class="leaderboard-container">
+  @for (duo of duos; track duo.id; let i = $index) {
+    <div class="leaderboard-row clickable" (click)="openDetails(duo)">
+      <div class="rank">{{ i + 1 }}</div>
+
+      <div class="status-col">
+        <span class="status-dot"
+              [class.team-blue]="duo.teamColor === TeamEnum.BLUE"
+              [class.team-white]="duo.teamColor === TeamEnum.WHITE">
+        </span>
+      </div>
+
+      <div class="players-info">
+        <div class="player-one">{{ duo.player1?.name }}</div>
+        <div class="player-two">{{ duo.player2?.name }}</div>
+      </div>
+
+      <div class="score" [ngClass]="getScoreClass(duo.totalScore)">
+        {{ formatScore(duo.totalScore) }}
+      </div>
+
+      <div class="hole-progress">
+        F{{ duo.lastHole?.holeNumber || 0 }}
+      </div>
+    </div>
+  }
+</div>
+
+@if (isModalOpen && selectedDuo) {
+  <app-score-modal [duo]="selectedDuo" (closed)="closeModal()"></app-score-modal>
+}

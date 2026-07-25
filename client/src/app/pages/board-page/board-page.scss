@@ -1,0 +1,58 @@
+// :host {
+//   display: block;
+//   min-height: 100vh;
+//   overflow-y: auto;
+// }
+
+
+
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  overflow-y: auto;
+  align-items: center;
+}
+
+.header-content {
+    width: 100%;
+}
+
+.leaderboard-section {
+//   display: flex;
+//   justify-content: center;
+  margin-top: 1rem;
+}
+
+.leaderboard-section app-leaderboard {
+  width: 100%;
+  max-width: 700px;
+}
+
+.foursomes-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  gap: 1rem;
+  padding: 1rem 1rem 2rem;
+  margin-bottom: 3rem;
+}
+
+.matchup-label {
+  width: 100%;
+  max-width: 620px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-top: 1rem;
+  margin-bottom: -0.15rem;
+}
+
+.foursomes-section app-foursome {
+  width: 100%;
+  max-width: 620px;
+}

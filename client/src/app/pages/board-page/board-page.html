@@ -1,0 +1,18 @@
+<div class="header-content">
+    <app-header></app-header>
+</div>
+
+<div class="leaderboard-section">
+  <app-leaderboard [duos]="leaderboardData"></app-leaderboard>
+</div>
+
+<div class="foursomes-section">
+  <div class="matchup-label">Matchup</div>
+  @for (foursome of foursomes; track foursome.title) {
+    <app-foursome
+      [title]="foursome.title"
+      [duo1]="foursome.duo1"
+      [duo2]="foursome.duo2">
+    </app-foursome>
+  }
+</div>

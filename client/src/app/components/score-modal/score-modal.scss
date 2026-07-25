@@ -1,0 +1,207 @@
+$color-border: #e2e8f0;
+$color-text-dark: #1e293b;
+$color-text-muted: #64748b;
+$color-rank: #c2410c;
+$color-under-par: #065f46;
+$color-over-par: #dc2626;
+$color-blue-team: #3b82f6;
+$color-white-team-border: #cbd5e1;
+
+$modal-bg-green: #eef5f1;
+$table-header-bg: #f1f6f3;
+$birdie-bg: #adc9b9;
+$birdie-text: #0b3d20;
+$bogey-bg: #e6c5c5;
+$bogey-text: #8a1f1f;
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.modal-card {
+  background-color: #ffffff;
+  width: min(92%, 720px);
+  max-width: 720px;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.75rem;
+  color: $color-text-muted;
+  cursor: pointer;
+  line-height: 1;
+
+  &:hover {
+    color: $color-text-dark;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .team-names {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+  }
+
+  .header-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ffffff;
+
+    &.score-under {
+      background-color: $color-under-par;
+    }
+
+    &.score-over {
+      background-color: $color-over-par;
+    }
+
+    &.score-even {
+      background-color: $color-text-dark;
+    }
+  }
+}
+
+.nine-section {
+  margin-bottom: 20px;
+
+  h4 {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: $color-text-muted;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+  }
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: visible;
+}
+
+.scorecard-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.8rem;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  overflow: hidden;
+
+  th,
+  td {
+    padding: 6px 2px;
+    border: 1px solid $color-border;
+    min-width: 0;
+  }
+
+  th {
+    font-weight: 500;
+    color: $color-text-muted;
+    background-color: $table-header-bg;
+    text-align: center;
+    padding-left: 0;
+  }
+
+  th:first-child {
+    width: 48px;
+    text-align: left;
+    padding-left: 8px;
+  }
+
+  .row-header td {
+    background-color: $table-header-bg;
+    color: $color-text-muted;
+    font-weight: 700;
+  }
+
+  .row-scr td {
+    font-weight: 700;
+    color: $color-text-dark;
+  }
+
+  td.cell-birdie {
+    background-color: $birdie-bg;
+    color: $birdie-text;
+  }
+
+  td.cell-bogey {
+    background-color: $bogey-bg;
+    color: $bogey-text;
+  }
+}
+
+.nine-summary {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: $color-text-muted;
+  margin-top: 6px;
+  padding-right: 4px;
+
+  strong {
+    color: $color-text-dark;
+  }
+}
+
+.total-footer {
+  background-color: $modal-bg-green;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+
+  .total-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: $birdie-text;
+  }
+
+  .total-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .thru-text {
+    font-size: 0.9rem;
+    color: $color-text-muted;
+
+    strong {
+      color: $color-text-dark;
+    }
+  }
+
+  .gross-total {
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: $birdie-text;
+  }
+}

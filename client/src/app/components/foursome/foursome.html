@@ -1,0 +1,71 @@
+<div class="foursome-card">
+  <!-- Header Section -->
+  <div class="foursome-header">
+    <div class="title-group">
+      <!-- Crossed Swords Icon / Placeholder -->
+      <span class="swords-icon">⚔</span>
+      <span class="foursome-title">{{ title }}</span>
+    </div>
+    <span class="match-badge" [ngClass]="getMatchStatusClass()">
+      {{ getMatchStatus() }}
+    </span>
+  </div>
+
+  <!-- Content Section -->
+  <div class="foursome-body">
+    
+    <!-- TOP DUO -->
+    <div class="duo-row row-blue" (click)="openDetails(duo1)">
+      <div class="score-block-wrapper">
+        <div class="score-block team-blue-bg">
+          <span class="team-label text-blue">BLUE</span>
+          <span class="score-val" [ngClass]="getScoreClass(duo1.totalScore)">
+            {{ formatScore(duo1.totalScore) }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="player-names">
+        <div class="p1">{{ duo1.player1?.name }}</div>
+        <div class="p2">{{ duo1.player2?.name }}</div>
+      </div>
+      
+      <div class="thru-block">
+        <div class="thru-text">Thru {{ duo1.lastHole?.holeNumber || 0 }}</div>
+        <div class="gross-score">{{ getGrossTotalScore(duo1) }}</div>
+      </div>
+    </div>
+
+    <!-- Separator Line with "vs" -->
+    <div class="vs-divider">
+      <span class="vs-text">vs</span>
+    </div>
+
+    <!-- BOTTOM DUO -->
+    <div class="duo-row row-white" (click)="openDetails(duo2)">
+      <div class="score-block-wrapper">
+        <div class="score-block team-white-bg">
+          <span class="team-label text-white">WHITE</span>
+          <span class="score-val" [ngClass]="getScoreClass(duo2.totalScore)">
+            {{ formatScore(duo2.totalScore) }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="player-names">
+        <div class="p1">{{ duo2.player1?.name }}</div>
+        <div class="p2">{{ duo2.player2?.name }}</div>
+      </div>
+      
+      <div class="thru-block">
+        <div class="thru-text">Thru {{ duo2.lastHole?.holeNumber || 0 }}</div>
+        <div class="gross-score">{{ getGrossTotalScore(duo2) }}</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+@if (isModalOpen && selectedDuo) {
+  <app-score-modal [duo]="selectedDuo" (closed)="closeModal()"></app-score-modal>
+}

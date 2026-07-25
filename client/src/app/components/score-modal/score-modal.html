@@ -1,0 +1,84 @@
+@if (duo) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="closeModal()">&times;</button>
+
+      <div class="modal-header">
+        <h3 class="team-names">
+          {{ duo.player1?.name }} & {{ duo.player2?.name }}
+        </h3>
+        <span class="header-badge" [ngClass]="getScoreClass(duo.totalScore)">
+          {{ formatScore(duo.totalScore) }}
+        </span>
+      </div>
+
+      <div class="nine-section">
+        <h4>FRONT 9</h4>
+        <div class="table-scroll">
+          <table class="scorecard-table">
+            <tr class="row-header">
+              <th>Hole</th>
+              @for (h of [1,2,3,4,5,6,7,8,9]; track h) { <td>{{ h }}</td> }
+            </tr>
+            <tr>
+              <th>Par</th>
+              @for (h of [1,2,3,4,5,6,7,8,9]; track h) {
+                <td>{{ getHolePar(h, getHoleByNumber(h)?.isPar3 || false) }}</td>
+              }
+            </tr>
+            <tr class="row-scr">
+              <th>Scr</th>
+              @for (h of [1,2,3,4,5,6,7,8,9]; track h) {
+                <td [ngClass]="getScoreCellClass(h, getHoleByNumber(h))">
+                  {{ getHoleByNumber(h)?.score || '—' }}
+                </td>
+              }
+            </tr>
+          </table>
+        </div>
+        <div class="nine-summary">
+          Par: <strong>{{ getHalfTotalPar([1,2,3,4,5,6,7,8,9]) }}</strong>
+          Score: <strong>{{ getHalfTotalScore([1,2,3,4,5,6,7,8,9]) }}</strong>
+        </div>
+      </div>
+
+      <div class="nine-section">
+        <h4>BACK 9</h4>
+        <div class="table-scroll">
+          <table class="scorecard-table">
+            <tr class="row-header">
+              <th>Hole</th>
+              @for (h of [10,11,12,13,14,15,16,17,18]; track h) { <td>{{ h }}</td> }
+            </tr>
+            <tr>
+              <th>Par</th>
+              @for (h of [10,11,12,13,14,15,16,17,18]; track h) {
+                <td>{{ getHolePar(h, getHoleByNumber(h)?.isPar3 || false) }}</td>
+              }
+            </tr>
+            <tr class="row-scr">
+              <th>Scr</th>
+              @for (h of [10,11,12,13,14,15,16,17,18]; track h) {
+                <td [ngClass]="getScoreCellClass(h, getHoleByNumber(h))">
+                  {{ getHoleByNumber(h)?.score || '—' }}
+                </td>
+              }
+            </tr>
+          </table>
+        </div>
+        <div class="nine-summary">
+          Par: <strong>{{ getHalfTotalPar([10,11,12,13,14,15,16,17,18]) }}</strong>
+          Score: <strong>{{ getHalfTotalScore([10,11,12,13,14,15,16,17,18]) }}</strong>
+        </div>
+      </div>
+
+      <div class="total-footer">
+        <span class="total-title">TOTAL</span>
+        <div class="total-right">
+          <span class="thru-text">Thru <strong>{{ duo.lastHole?.holeNumber || 0 }}</strong></span>
+          <span class="gross-total">{{ getGrossTotalScore() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

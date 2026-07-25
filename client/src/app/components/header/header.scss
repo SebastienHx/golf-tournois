@@ -1,0 +1,104 @@
+.event-header {
+  /* Scope our component colors locally (move these to global files if needed) */
+  --header-bg: #1b7343;          /* Deep Golf Green */
+  --header-bg-circle: #ffffff0b; /* Very faint white layer for overlay shapes */
+  --text-primary: #ffffff;
+  --text-secondary: #a3d9b9;     /* Light minty green for subtext */
+  
+  position: relative;
+  background-color: var(--header-bg);
+  padding: 2rem 1.5rem;
+  overflow: hidden; /* Keeps the background circles contained */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Decorative subtle concentric background circles on the right */
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    right: -10%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    border: 80px solid var(--header-bg-circle);
+    pointer-events: none;
+  }
+  
+  &::before {
+    width: 400px;
+    height: 400px;
+  }
+  
+  &::after {
+    width: 600px;
+    height: 600px;
+    right: -20%;
+  }
+}
+
+.header-container {
+  position: relative;
+  z-index: 1; /* Ensures text stays above background overlay circles */
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* 1. Live Badge Row */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  
+  .icon {
+    font-size: 1.1rem;
+  }
+  
+  .badge-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* 2. Main Title */
+.event-title {
+  color: var(--text-primary);
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.02em;
+  
+  /* Slight compression to match the reference look */
+  font-stretch: condensed; 
+}
+
+/* 3. Metadata Row */
+.event-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  
+  .icon {
+    font-size: 0.9rem;
+  }
+  
+  .meta-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Generic Icon centering helper */
+.material-symbols-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
