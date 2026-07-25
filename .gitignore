@@ -1,0 +1,34 @@
+# Angular specific
+client/dist/
+client/out-tsc/
+client/tmp/
+client/coverage/
+client/e2e/test-output/
+client/.angular/
+.angular/
+
+# Node modules and dependency files
+/node_modules/
+/package-lock.json
+/yarn.lock
+
+# Environment files
+/.env
+
+# Angular CLI and build artefacts
+/.angular-cli.json
+/.ng/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+#vscode
+/.vscode/
+
+#server
+serveur/node_modules/
