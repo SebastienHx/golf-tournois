@@ -1,0 +1,36 @@
+<div class="lock-container" *ngIf="!isUnlocked()">
+  <div class="lock-card">
+    <!-- Lock Icon -->
+    <div class="icon-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1b6644" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+
+    <!-- Title & Subtitle -->
+    <h2>Admin Access</h2>
+    <p class="subtitle">Enter password to continue</p>
+
+    <!-- Password Input Form -->
+    <form (ngSubmit)="unlock()">
+      <div class="input-wrapper">
+        <input 
+          type="password" 
+          placeholder="Password" 
+          [ngModel]="password()" 
+          (ngModelChange)="password.set($event)" 
+          name="password"
+          required
+        />
+      </div>
+
+      <p class="error-text" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+
+      <button type="submit" class="unlock-btn">Unlock</button>
+    </form>
+
+    <!-- Hint Text -->
+    <span class="hint-text">Hint: golf2025</span>
+  </div>
+</div>

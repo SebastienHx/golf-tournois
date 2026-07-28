@@ -1,0 +1,52 @@
+<div class="page-container">
+  <!-- Top Navigation & Header -->
+  <header class="page-header">
+    <a routerLink="/admin-page" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to admin
+    </a>
+    <h1>Player Management</h1>
+    <p class="subtitle">Add, view, and manage players registered for the tournament.</p>
+  </header>
+
+  <div class="content-grid">
+    <!-- Left Column: Add New Player -->
+    <section class="grid-card">
+      <app-new-player-section (playerCreated)="getPlayers()"></app-new-player-section>
+    </section>
+
+    <!-- Right Column: Player Roster -->
+    <section class="grid-card">
+      <div class="card-header">
+        <h2>Registered Players</h2>
+        <span class="badge">{{ allPlayers().length }} Total</span>
+      </div>
+
+      <div *ngIf="isLoading()" class="state-message">Loading players...</div>
+
+      <div *ngIf="!isLoading() && allPlayers().length === 0" class="state-message">
+        No players registered yet. Use the form to add one!
+      </div>
+
+      <div class="player-list" *ngIf="!isLoading() && allPlayers().length > 0">
+        <div class="player-item" *ngFor="let player of allPlayers()">
+          <div class="player-avatar">
+            {{ player.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="player-details">
+            <span class="player-name">{{ player.name }}</span>
+            <div class="player-stats">
+              <span>Drives: <strong>{{ player.driveTaken }}</strong></span>
+              <span>Par 3: <strong>{{ player.drivePar3Taken }}</strong></span>
+            </div>
+          </div>
+          <!-- Optional action button -->
+          <button class="delete-btn" (click)="deletePlayer(player.id)">✕</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

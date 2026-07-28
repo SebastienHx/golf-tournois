@@ -21,5 +21,9 @@ export const routes: Routes = [
     {
         path: 'admin-page',
         loadComponent: () => import('@app/pages/admin-page/admin-page').then(m => m.AdminPage)
+    },
+    {
+        path: 'player-management-page',
+        loadComponent: () => import('@app/pages/player-management-page/player-management-page').then(m => m.PlayerManagementPage)
     }
 ];

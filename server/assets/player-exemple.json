@@ -1,0 +1,50 @@
+[
+    {
+        "team": 0, // Blue
+        "names": ["Bousquet", "Brossier"],
+        "id": "f-24-1",
+        "stats": [
+            {
+                "hole": 1,
+                "drive": 0,
+                "fairway": false,
+                "hazard": false,
+                "putt": 3,
+                "score": 6
+            }
+        ],
+        "adjustScore": -2,
+        "drive0": 0,
+        "drive1": 0,
+        "drive0Par3": 0,
+        "drive1Par3": 0,
+        "totalScore": 0
+    },
+    {
+        "team": 1, // White
+        "names": ["Dubé", "Harvey"],
+        "id": "f-24-2",
+        "stats": [
+            {
+                "hole": 5,
+                "drive": 1,
+                "fairway": false,
+                "hazard": false,
+                "putt": 3,
+                "score": 6
+            },
+            {
+                "hole": 6,
+                "drive": 1,
+                "fairway": false,
+                "hazard": true,
+                "putt": 3,
+                "score": 2
+            }
+        ],
+        "adjustScore": 0,
+        "drive0": 0,
+        "drive1": 0,
+        "totalScore": 0
+    }
+]

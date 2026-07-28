@@ -31,4 +31,5 @@ yarn-error.log*
 client/.vscode/
 
 #server
-serveur/node_modules/
+server/node_modules/
+server/.env

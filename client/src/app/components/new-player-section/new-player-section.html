@@ -1,0 +1,51 @@
+<section class="player-form-card">
+  <h2>Add New Player</h2>
+
+  <form (submit)="$event.preventDefault(); createPlayer()">
+    <div class="form-group">
+      <label for="playerName">Player Name</label>
+      <input
+        id="playerName"
+        type="text"
+        placeholder="e.g. John Doe"
+        [value]="form().name"
+        (input)="updateField('name', $any($event.target).value)"
+      />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="driveTaken">Drives Taken</label>
+        <input
+          id="driveTaken"
+          type="number"
+          min="0"
+          [value]="form().driveTaken"
+          (input)="updateField('driveTaken', +$any($event.target).value)"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="drivePar3">Par 3 Drives</label>
+        <input
+          id="drivePar3"
+          type="number"
+          min="0"
+          [value]="form().drivePar3Taken"
+          (input)="updateField('drivePar3Taken', +$any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Creating...' : 'Create Player' }}
+    </button>
+
+    <p
+      *ngIf="feedback()"
+      [class]="'feedback-text ' + feedback()?.type"
+    >
+      {{ feedback()?.message }}
+    </p>
+  </form>
+</section>

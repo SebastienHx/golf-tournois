@@ -1,4 +1,4 @@
-export enum Team {
+export enum TeamEnum {
     BLUE,
     WHITE,
 }

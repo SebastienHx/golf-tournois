@@ -6,8 +6,8 @@ import { TeamEnum } from './team';
 export interface Player{
     id: string;
     name: string;
-    teamId: string;
-    driveTaken: number; //min 4 drive taken per player
+    duoIds: string[]; //list of duos the player is in (day 1 and day 2)
+    driveTaken: number; //min 4 drive taken per player //TODO: Reset after day 1
     drivePar3Taken: number; //min 2 drive taken per player
 }
 
