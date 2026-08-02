@@ -1,50 +1,50 @@
 <div class="page-container">
   <header class="page-header">
-    <a routerLink="/admin-page" class="back-link">Back to admin</a>
-    <h1>Foursome duo management</h1>
-    <p>Choose a day, then click a team to select players for each foursome.</p>
+    <a routerLink="/admin-page" class="back-link">Retour à la page admin</a>
+    <h1>Foursome management</h1>
+    <p>Choisissez la journée, puis cliquez sur une équipe pour sélectionner les joueurs.</p>
   </header>
 
   <section class="day-selector" aria-label="Tournament day selector">
-    <button type="button" [class.active]="selectedDay() === 1" (click)="selectDay(1)">Day 1</button>
-    <button type="button" [class.active]="selectedDay() === 2" (click)="selectDay(2)">Day 2</button>
+    <button type="button" [class.active]="selectedDay() === 1" (click)="selectDay(1)">Jour 1</button>
+    <button type="button" [class.active]="selectedDay() === 2" (click)="selectDay(2)">Jour 2</button>
   </section>
 
   <div class="toolbar">
-    <button type="button" class="add-foursome-button" (click)="addFoursome()">Add foursome</button>
-    <button type="button" class="save-button" (click)="saveFoursomesForSelectedDay()">Save day</button>
+    <button type="button" class="add-foursome-button" (click)="addFoursome()">Ajouter un nouveau foursome</button>
+    <button type="button" class="save-button" (click)="saveFoursomesForSelectedDay()">Enregistrer</button>
   </div>
 
-  <div *ngIf="isLoading()" class="state-message">Loading players...</div>
+  <div *ngIf="isLoading()" class="state-message">Chargement des joueurs...</div>
 
   <section class="foursomes-list" *ngIf="!isLoading()">
     <article class="foursome-card" *ngFor="let foursome of getFoursomesForSelectedDay(); let index = index">
       <div class="foursome-header">
         <h2>Foursome {{ index + 1 }}</h2>
-        <button type="button" class="remove-foursome-button" (click)="removeFoursome(foursome.id)">Remove</button>
+        <button type="button" class="remove-foursome-button" (click)="removeFoursome(foursome.id)">Supprimer</button>
       </div>
 
       <div class="team-layout">
         <div class="team-panel white-panel" (click)="toggleTeamPicker(foursome.id, 'WHITE')">
-          <h3>WHITE team</h3>
+          <h3>équipe BLANCHE</h3>
           <div class="player-chip-list">
             <span class="player-chip" *ngFor="let player of foursome.whitePlayers">
               {{ player.name }}
               <button type="button" (click)="$event.stopPropagation(); removePlayerFromTeam(foursome.id, 'WHITE', player.id)">×</button>
             </span>
           </div>
-          <p *ngIf="foursome.whitePlayers.length < 2" class="helper">Click to add 2 WHITE players.</p>
+          <p *ngIf="foursome.whitePlayers.length < 2" class="helper">Cliquez pour ajouter 2 joueurs BLANC.</p>
         </div>
 
         <div class="team-panel blue-panel" (click)="toggleTeamPicker(foursome.id, 'BLUE')">
-          <h3>BLUE team</h3>
+          <h3>équipe BLUE</h3>
           <div class="player-chip-list">
             <span class="player-chip" *ngFor="let player of foursome.bluePlayers">
               {{ player.name }}
               <button type="button" (click)="$event.stopPropagation(); removePlayerFromTeam(foursome.id, 'BLUE', player.id)">×</button>
             </span>
           </div>
-          <p *ngIf="foursome.bluePlayers.length < 2" class="helper">Click to add 2 BLUE players.</p>
+          <p *ngIf="foursome.bluePlayers.length < 2" class="helper">Cliquez pour ajouter 2 joueurs BLEU.</p>
         </div>
       </div>
 
@@ -72,7 +72,7 @@
     </div>
 
     <ng-template #emptyPlayerPicker>
-      <p class="empty-state">No available players left for this team.</p>
+      <p class="empty-state">Pas de joueur disponible pour cette équipe.</p>
     </ng-template>
   </div>
 </div>

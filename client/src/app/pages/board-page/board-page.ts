@@ -25,13 +25,27 @@ interface SavedFoursome {
   styleUrl: './board-page.scss',
 })
 export class BoardPage implements OnInit {
+  readonly dayStorageKey = 'golf-board-selected-day';
+
   leaderboardData: PlayerDuo[] = [];
   foursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
+  selectedDay = this.getStoredDay();
 
   constructor(private foursomeService: FoursomeService, private readonly cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.loadDayFoursomes(1);
+    this.loadDayFoursomes(this.selectedDay);
+  }
+
+  selectDay(day: number): void {
+    this.selectedDay = day;
+    localStorage.setItem(this.dayStorageKey, String(day));
+    this.loadDayFoursomes(day);
+  }
+
+  private getStoredDay(): number {
+    const savedDay = Number(localStorage.getItem(this.dayStorageKey));
+    return savedDay === 1 || savedDay === 2 ? savedDay : 1;
   }
 
   private getFallbackHoleStats(stats: any[] = []) {
@@ -64,45 +78,47 @@ export class BoardPage implements OnInit {
   }
 
   private loadDayFoursomes(day: number): void {
+    this.leaderboardData = [];
+    this.foursomes = [];
+
     this.foursomeService.getFoursomeByDay(day).subscribe({
       next: (foursomes) => {
-      const duoList: PlayerDuo[] = [];
-      const pairedFoursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
+        const duoList: PlayerDuo[] = [];
+        const pairedFoursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
 
-      (foursomes ?? []).forEach((foursome, index) => {
-        const whiteDuo = this.buildDuoFromTeam(
-          foursome.whitePlayers ?? [],
-          TeamEnum.WHITE,
-          foursome.whiteStats ?? [],
-          foursome.whiteScore ?? 0
-        );
+        (foursomes ?? []).forEach((foursome, index) => {
+          const whiteDuo = this.buildDuoFromTeam(
+            foursome.whitePlayers ?? [],
+            TeamEnum.WHITE,
+            foursome.whiteStats ?? [],
+            foursome.whiteScore ?? 0
+          );
 
-        const blueDuo = this.buildDuoFromTeam(
-          foursome.bluePlayers ?? [],
-          TeamEnum.BLUE,
-          foursome.blueStats ?? [],
-          foursome.blueScore ?? 0
-        );
+          const blueDuo = this.buildDuoFromTeam(
+            foursome.bluePlayers ?? [],
+            TeamEnum.BLUE,
+            foursome.blueStats ?? [],
+            foursome.blueScore ?? 0
+          );
 
-        duoList.push(whiteDuo, blueDuo);
+          duoList.push(whiteDuo, blueDuo);
 
-        pairedFoursomes.push({
-          title: `FOURSOME ${index + 1}`,
-          duo1: blueDuo,
-          duo2: whiteDuo,
+          pairedFoursomes.push({
+            title: `FOURSOME ${index + 1}`,
+            duo1: blueDuo,
+            duo2: whiteDuo,
+          });
         });
-      });
 
-      // Assign new array references so Angular detects the change immediately
-      this.leaderboardData = [...duoList];
-      this.foursomes = pairedFoursomes;
-      this.cdr.markForCheck();
-    },
-    error: (err) => {
-      console.error('Failed to load foursomes', err);
-      this.leaderboardData = [];
-      this.foursomes = [];
-    },
-  });
+        this.leaderboardData = [...duoList];
+        this.foursomes = pairedFoursomes;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load foursomes', err);
+        this.leaderboardData = [];
+        this.foursomes = [];
+      },
+    });
   }
 }

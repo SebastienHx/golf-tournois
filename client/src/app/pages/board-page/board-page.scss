@@ -19,6 +19,42 @@
     width: 100%;
 }
 
+.day-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; // Horizontally centers the container if given a full width
+  gap: 0.5rem;
+  padding: 0.75rem 1rem; // Equal top and bottom padding for perfect vertical centering
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  margin-top: 1rem;
+  .day-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #475569;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.is-selected {
+      background: linear-gradient(135deg, #0f766e, #10b981);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+    }
+  }
+}
+
 .leaderboard-section {
 //   display: flex;
 //   justify-content: center;

@@ -2,6 +2,24 @@
     <app-header></app-header>
 </div>
 
+<div class="day-selector" aria-label="Select tournament day">
+  <button
+    type="button"
+    class="day-pill"
+    [class.is-selected]="selectedDay === 1"
+    (click)="selectDay(1)">
+    Jour 1
+  </button>
+
+  <button
+    type="button"
+    class="day-pill"
+    [class.is-selected]="selectedDay === 2"
+    (click)="selectDay(2)">
+    Jour 2
+  </button>
+</div>
+
 <div class="leaderboard-section">
   <app-leaderboard [duos]="leaderboardData"></app-leaderboard>
 </div>
