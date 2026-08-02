@@ -24,6 +24,7 @@ export interface PlayerDuo {
 
 export interface Foursome {
     id: string;
-    playerDuo1: PlayerDuo;
-    playerDuo2: PlayerDuo;
+    day: number;
+    whitePlayers : PlayerDuo;
+    bluePlayers: PlayerDuo;
 }

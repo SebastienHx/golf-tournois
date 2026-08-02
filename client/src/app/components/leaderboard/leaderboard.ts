@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
 import { NgClass } from '@angular/common';
@@ -11,15 +11,27 @@ import { ScoreModal } from '../score-modal/score-modal';
     templateUrl: './leaderboard.html',
     styleUrls: ['./leaderboard.scss']
 })
-export class Leaderboard implements OnInit {
+export class Leaderboard implements OnInit, OnChanges {
     @Input() duos: PlayerDuo[] = [];
     readonly TeamEnum = TeamEnum;
 
+    sortedDuos: PlayerDuo[] = [];
     isModalOpen = false;
     selectedDuo: PlayerDuo | null = null;
 
     ngOnInit(): void {
-        this.duos.sort((a, b) => a.totalScore - b.totalScore);
+      this.updateSortedDuos();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['duos']) {
+        this.updateSortedDuos();
+      }
+    }
+
+    private updateSortedDuos(): void {
+      // Keep internal sorted copy without mutating input reference
+      this.sortedDuos = [...(this.duos || [])].sort((a, b) => a.totalScore - b.totalScore);
     }
 
     openDetails(duo: PlayerDuo): void {

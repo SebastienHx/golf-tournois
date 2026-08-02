@@ -11,6 +11,8 @@ interface FoursomeDraft {
   id: number;
   whitePlayers: Player[];
   bluePlayers: Player[];
+  whiteScore: number;
+  blueScore: number;
 }
 
 interface TeamPickerState {
@@ -83,6 +85,8 @@ export class FoursomeDuoManagementPage {
       id: Date.now() + Math.floor(Math.random() * 1000),
       whitePlayers: [],
       bluePlayers: [],
+      whiteScore: 0,
+      blueScore: 0,
     };
   }
 

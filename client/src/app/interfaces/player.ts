@@ -12,7 +12,7 @@ export interface Player{
 }
 
 export interface PlayerDuo {
-    stats: HoleStats[]; //Goes up indefinitely, needs to %18 (made for multiple golf courses)
+    stats: HoleStats[]; 
     lastHole: HoleStats;
     player1: Player;
     player2: Player;
@@ -24,6 +24,7 @@ export interface PlayerDuo {
 
 export interface Foursome {
     id: string;
-    playerDuo1: PlayerDuo;
-    playerDuo2: PlayerDuo;
+    day: number;
+    whitePlayers : PlayerDuo;
+    bluePlayers: PlayerDuo;
 }

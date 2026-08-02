@@ -1,9 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FoursomeComponent } from '@app/components/foursome/foursome';
 import { Header } from '@app/components/header/header';
 import { Leaderboard } from '@app/components/leaderboard/leaderboard';
-import { PlayerDuo } from '@app/interfaces/player';
+import { Player, PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
+import { FoursomeService } from '@app/services/foursome.service';
+
+interface SavedFoursome {
+  id?: number;
+  whitePlayers?: Player[];
+  bluePlayers?: Player[];
+  whiteScore?: number;
+  blueScore?: number;
+  whiteStats?: any[];
+  blueStats?: any[];
+}
 
 @Component({
   selector: 'app-board-page',
@@ -12,67 +24,85 @@ import { TeamEnum } from '@app/interfaces/team';
   templateUrl: './board-page.html',
   styleUrl: './board-page.scss',
 })
-export class BoardPage implements OnInit{
-
+export class BoardPage implements OnInit {
   leaderboardData: PlayerDuo[] = [];
   foursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
 
-  ngOnInit(): void {
-    this.leaderboardData = [
-      {
-        id: '1',
-        player1: { id: 'p1', name: 'Mike Brown', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        player2: { id: 'p2', name: 'Steve Clark', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        teamColor: TeamEnum.WHITE,
-        totalScore: -5,
-        adjustScore: 0,
-        lastHole: { holeNumber: 10, isPar3: false, hasHitInFairway: true, hasHitInHazard: false, nbrOfPutt: 2, score: 4, driveTakenBy:"p1" },
-        stats: [{ holeNumber: 1, isPar3: true, hasHitInFairway: true, hasHitInHazard: false, nbrOfPutt: 2, score: 4, driveTakenBy:"p1" },]
-      },
-      {
-        id: '2',
-        player1: { id: 'p3', name: 'James Miller', duoIds: ['t2'], driveTaken: 0, drivePar3Taken: 0 },
-        player2: { id: 'p4', name: 'Tom Harris', duoIds: ['t2'], driveTaken: 0, drivePar3Taken: 0 },
-        teamColor: TeamEnum.BLUE,
-        totalScore: -4,
-        adjustScore: 0,
-        lastHole: { holeNumber: 9, isPar3: false, hasHitInFairway: true, hasHitInHazard: false, nbrOfPutt: 1, score: 3, driveTakenBy:"p1" },
-        stats: []
-      },
-      {
-        id: '3',
-        player1: { id: 'p5', name: 'Chris Evans', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        player2: { id: 'p6', name: 'Dan Lewis', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        teamColor: TeamEnum.WHITE,
-        totalScore: -1,
-        adjustScore: 0,
-        lastHole: { holeNumber: 12, isPar3: false, hasHitInFairway: true, hasHitInHazard: false, nbrOfPutt: 2, score: 4 , driveTakenBy:"p1"},
-        stats: []
-      },
-      {
-        id: '4',
-        player1: { id: 'p7', name: 'Ryan Scott', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        player2: { id: 'p8', name: 'Paul Walker', duoIds: ['t1'], driveTaken: 0, drivePar3Taken: 0 },
-        teamColor: TeamEnum.BLUE,
-        totalScore: 6,
-        adjustScore: 0,
-        lastHole: { holeNumber: 9, isPar3: false, hasHitInFairway: false, hasHitInHazard: true, nbrOfPutt: 3, score: 6, driveTakenBy:"p1" },
-        stats: []
-      }
-    ];
+  constructor(private foursomeService: FoursomeService, private readonly cdr: ChangeDetectorRef) {}
 
-    this.foursomes = this.leaderboardData.reduce<Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }>>((acc, duo, index) => {
-      if (index % 2 === 0) {
-        const duo2 = this.leaderboardData[index + 1];
-        if (duo2) {
-          acc.push({
-            title: `FOURSOME ${acc.length + 1}`,
-            duo1: duo,
-            duo2,
-          });
-        }
-      }
-      return acc;
-    }, []);
+  ngOnInit(): void {
+    this.loadDayFoursomes(1);
+  }
+
+  private getFallbackHoleStats(stats: any[] = []) {
+    const lastHole = stats[stats.length - 1];
+    return lastHole ?? {
+      holeNumber: 0,
+      isPar3: false,
+      hasHitInFairway: false,
+      hasHitInHazard: false,
+      nbrOfPutt: 0,
+      score: 0,
+      driveTakenBy: '',
+    };
+  }
+
+  private buildDuoFromTeam(teamPlayers: Player[], teamColor: TeamEnum, stats: any[] = [], score: number = 0): PlayerDuo {
+    const player1 = teamPlayers[0] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
+    const player2 = teamPlayers[1] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
+
+    return {
+      id: `${teamColor}-${player1.id || 'empty'}-${player2.id || 'empty'}`,
+      player1,
+      player2,
+      teamColor,
+      totalScore: score,
+      adjustScore: 0,
+      lastHole: this.getFallbackHoleStats(stats),
+      stats: stats ?? [],
+    };
+  }
+
+  private loadDayFoursomes(day: number): void {
+    this.foursomeService.getFoursomeByDay(day).subscribe({
+      next: (foursomes) => {
+      const duoList: PlayerDuo[] = [];
+      const pairedFoursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
+
+      (foursomes ?? []).forEach((foursome, index) => {
+        const whiteDuo = this.buildDuoFromTeam(
+          foursome.whitePlayers ?? [],
+          TeamEnum.WHITE,
+          foursome.whiteStats ?? [],
+          foursome.whiteScore ?? 0
+        );
+
+        const blueDuo = this.buildDuoFromTeam(
+          foursome.bluePlayers ?? [],
+          TeamEnum.BLUE,
+          foursome.blueStats ?? [],
+          foursome.blueScore ?? 0
+        );
+
+        duoList.push(whiteDuo, blueDuo);
+
+        pairedFoursomes.push({
+          title: `FOURSOME ${index + 1}`,
+          duo1: blueDuo,
+          duo2: whiteDuo,
+        });
+      });
+
+      // Assign new array references so Angular detects the change immediately
+      this.leaderboardData = [...duoList];
+      this.foursomes = pairedFoursomes;
+      this.cdr.markForCheck();
+    },
+    error: (err) => {
+      console.error('Failed to load foursomes', err);
+      this.leaderboardData = [];
+      this.foursomes = [];
+    },
+  });
   }
 }
