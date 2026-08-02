@@ -22,4 +22,8 @@ export class AdminPage {
   openPlayerManagement(): void {
     this.router.navigate(['/player-management-page']);
   }
+
+  openFoursomeDuoManagement(): void {
+    this.router.navigate(['/foursome-duo-management-page']);
+  }
 }

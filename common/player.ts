@@ -22,3 +22,8 @@ export interface PlayerDuo {
     id: string;
 }
 
+export interface Foursome {
+    id: string;
+    playerDuo1: PlayerDuo;
+    playerDuo2: PlayerDuo;
+}

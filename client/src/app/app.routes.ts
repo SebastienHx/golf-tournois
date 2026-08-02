@@ -23,6 +23,10 @@ export const routes: Routes = [
         loadComponent: () => import('@app/pages/admin-page/admin-page').then(m => m.AdminPage)
     },
     {
+        path: 'foursome-duo-management-page',
+        loadComponent: () => import('@app/pages/foursome-duo-management-page/foursome-duo-management-page').then(m => m.FoursomeDuoManagementPage)
+    },
+    {
         path: 'player-management-page',
         loadComponent: () => import('@app/pages/player-management-page/player-management-page').then(m => m.PlayerManagementPage)
     }

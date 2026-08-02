@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import { FoursomeController } from './controllers/foursome.controller';
 import { PingController } from './controllers/ping.controller';
 import { PlayerController } from './controllers/player.controller';
 
@@ -17,6 +18,7 @@ export class Application {
 
     constructor(
         private readonly playerController: PlayerController,
+        private readonly foursomeController: FoursomeController,
         private readonly pingController: PingController,
     ) {
         this.app = express();
@@ -40,6 +42,7 @@ export class Application {
     bindRoutes(): void {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/player', this.playerController.router);
+        this.app.use('/api/foursome', this.foursomeController.router);
         this.app.use('/ping', this.pingController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');

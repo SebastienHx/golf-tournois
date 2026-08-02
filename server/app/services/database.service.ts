@@ -21,7 +21,6 @@ export class DatabaseService {
 
     async connectToServer(uri: string) {
         try {
-            console.log('DB_URL:', DB_CONSTS.DB_URL);
 
             this.client = new MongoClient(uri, {
                 serverApi: {

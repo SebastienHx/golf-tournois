@@ -1,6 +1,7 @@
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
 import { DB_CONSTS, dbService } from './database.service';
+
 @Service()
 export class FoursomeService {
     private dbService = dbService;
@@ -14,96 +15,72 @@ export class FoursomeService {
         }
         return this.dbService.db.collection(DB_CONSTS.DB_COLLECTION);
     }
-    
-    async retrieveAllPlayers(): Promise<unknown[]> {
-        return await this.collection.find({}).toArray();
+
+    async getFoursomesByDay(day: number): Promise<any[]> {
+        const document = await this.collection.findOne({ day });
+        return document?.foursomes ?? [];
     }
 
-    async getPlayerDuoById(id: string): Promise<unknown | null> {
-        return await this.collection.findOne({ id });
-    }
+    async saveDayFoursomes(day: number, foursomes: any[]): Promise<any> {
+        const result = await this.collection.updateOne(
+            { day },
+            {
+                $set: {
+                    day,
+                    foursomes,
+                    updatedAt: new Date(),
+                },
+            },
+            { upsert: true },
+        );
 
-    async modifyPlayer(id: string, updatedPlayerData: unknown): Promise<unknown> {
-        await this.collection.updateOne({ id }, { $set: updatedPlayerData });
-        return await this.collection.findOne({ id });
-    }
-
-    async deletePlayer(id: string): Promise<unknown> {
-        return await this.collection.deleteOne({ id });
-    }
-
-    async addPlayer(newPlayerData: Record<string, unknown>): Promise<unknown> {
-        const playerToInsert = {
-            ...newPlayerData,
-            id: typeof newPlayerData.id === 'string' && newPlayerData.id.length > 0 ? newPlayerData.id : `player-${Date.now()}`,
+        return {
+            _id: result.upsertedId ?? undefined,
+            day,
+            foursomes,
         };
-
-        await this.collection.insertOne(playerToInsert);
-        return await this.collection.findOne({ id: playerToInsert.id });
     }
 
-    // async addHoleInfo(id: string, holeInfo: any): Promise<unknown> {
-    //     const duo = await this.collection.findOne({ id });
-    //     //if the hole already exists, update the stats
-    //     if (duo && duo.stats.filter((stat: { hole: number }) => stat.hole === holeInfo.hole).length > 0) {
-    //         duo.stats[holeInfo.hole - 1] = holeInfo;
-    //         duo.totalScore = duo.stats.reduce((acc: any, stat: { score: number }) => acc + stat.score, 0);
-    //         //Separate the drive stats for par 3 holes and for each duo's player
-    //         const driver0 = duo.stats.reduce(
-    //             (acc: { drive: number; drivePar3: number }, stat: any) => {
-    //                 stat.isPar3 ? (acc.drivePar3 += stat.drive === 0 ? 1 : 0) : (acc.drive += stat.drive === 0 ? 1 : 0);
-    //                 return acc;
-    //             },
-    //             { drive: 0, drivePar3: 0 },
-    //         );
-    //         const driver1 = duo.stats.reduce(
-    //             (acc: { drive: number; drivePar3: number }, stat: any) => {
-    //                 stat.isPar3 ? (acc.drivePar3 += stat.drive === 1 ? 1 : 0) : (acc.drive += stat.drive === 1 ? 1 : 0);
-    //                 return acc;
-    //             },
-    //             { drive: 0, drivePar3: 0 },
-    //         );
+    async addFoursome(day: number, foursome: any): Promise<any> {
+        const document = await this.collection.findOne({ day });
+        const foursomes = document?.foursomes ?? [];
+        const nextFoursomes = [...foursomes, foursome];
+        await this.collection.updateOne(
+            { day },
+            { $set: { day, foursomes: nextFoursomes, updatedAt: new Date() } },
+            { upsert: true },
+        );
 
-    //         await this.collection.updateOne(
-    //             { id },
-    //             {
-    //                 $set: {
-    //                     stats: duo.stats,
-    //                     totalScore: duo.totalScore,
-    //                     drive0: driver0.drive,
-    //                     drive1: driver1.drive,
-    //                     drive0Par3: driver0.drivePar3,
-    //                     drive1Par3: driver1.drivePar3,
-    //                 },
-    //             },
-    //         );
-    //     } else {
-    //         //if new hole stats, add to the stats array
-    //         if (holeInfo.isPar3) {
-    //             holeInfo.drive === 0 ? (duo.drive0Par3 += 1) : (duo.drive1Par3 += 1);
-    //         } else {
-    //             holeInfo.drive === 0 ? (duo.drive0 += 1) : (duo.drive1 += 1);
-    //         }
-    //         duo.stats[holeInfo.hole - 1] = holeInfo;
-    //         await this.collection.updateOne(
-    //             { id },
-    //             {
-    //                 $set: {
-    //                     stats: duo.stats,
-    //                     totalScore: duo.totalScore + holeInfo.score,
-    //                     drive0: duo.drive0,
-    //                     drive1: duo.drive1,
-    //                     drive0Par3: duo.drive0Par3,
-    //                     drive1Par3: duo.drive1Par3,
-    //                 },
-    //             },
-    //         );
-    //     }
-    //     return await this.collection.findOne({ id });
-    // }
+        return { day, foursomes: nextFoursomes };
+    }
 
-    async populateDatabase(data: any): Promise<void> {
-        await this.collection.deleteMany({}); //Prevents populating the database if there is no data
-        await this.collection.insertMany(data);
+    async modifyFoursome(day: number, foursomeId: number, updatedFoursome: any): Promise<any> {
+        const document = await this.collection.findOne({ day });
+        const foursomes = document?.foursomes ?? [];
+        const nextFoursomes = foursomes.map((foursome: any) =>
+            foursome.id === foursomeId ? { ...foursome, ...updatedFoursome } : foursome,
+        );
+
+        await this.collection.updateOne(
+            { day },
+            { $set: { day, foursomes: nextFoursomes, updatedAt: new Date() } },
+            { upsert: true },
+        );
+
+        return { day, foursomes: nextFoursomes };
+    }
+
+    async removeFoursome(day: number, foursomeId: number): Promise<any> {
+        const document = await this.collection.findOne({ day });
+        const foursomes = document?.foursomes ?? [];
+        const nextFoursomes = foursomes.filter((foursome: any) => foursome.id !== foursomeId);
+
+        await this.collection.updateOne(
+            { day },
+            { $set: { day, foursomes: nextFoursomes, updatedAt: new Date() } },
+            { upsert: true },
+        );
+
+        return { day, foursomes: nextFoursomes };
     }
 }
