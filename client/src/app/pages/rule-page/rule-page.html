@@ -1,1 +1,40 @@
-<p>rule-page works!</p>
+<div class="rules-container">
+  
+  <header class="rules-header">
+    <h1>Règles du tournoi</h1>
+    <p>Tous ce que vous devez savoir avant de joueur. Cliquez sur une section pour en apprendre plus.</p>
+  </header>
+
+  <div class="accordion">
+    @for (rule of rules; track rule.id; let i = $index) {
+      <div class="accordion-item" [class.active]="rule.isOpen">
+        
+        <!-- Accordion Header -->
+        <button class="accordion-header" (click)="toggleAccordion(i)">
+          <div class="header-left">
+            <span class="rule-icon">{{ rule.icon }}</span>
+            <span class="rule-title">{{ rule.title }}</span>
+          </div>
+          <span class="chevron" [class.rotated]="rule.isOpen">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+
+        <!-- Accordion Content -->
+        @if (rule.isOpen) {
+          <div class="accordion-body">
+            <ul>
+              @for (item of rule.content; track item) {
+                <li [innerHTML]="item"></li>
+              }
+            </ul>
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+
+</div>

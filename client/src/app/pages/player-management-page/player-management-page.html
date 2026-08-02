@@ -8,8 +8,8 @@
       </svg>
       Back to admin
     </a>
-    <h1>Player Management</h1>
-    <p class="subtitle">Add, view, and manage players registered for the tournament.</p>
+    <h1>Gestion des joueurs</h1>
+    <p class="subtitle">Ajouter, checker, et gérer les joueurs du tournoi.</p>
   </header>
 
   <div class="content-grid">
@@ -21,14 +21,14 @@
     <!-- Right Column: Player Roster -->
     <section class="grid-card">
       <div class="card-header">
-        <h2>Registered Players</h2>
+        <h2>Joueurs enregistrés</h2>
         <span class="badge">{{ allPlayers().length }} Total</span>
       </div>
 
-      <div *ngIf="isLoading()" class="state-message">Loading players...</div>
+      <div *ngIf="isLoading()" class="state-message">Chargement des joueurs...</div>
 
       <div *ngIf="!isLoading() && allPlayers().length === 0" class="state-message">
-        No players registered yet. Use the form to add one!
+        Aucun joueur enregistré pour le moment. Utilisez ce formulaire pour en ajouter!
       </div>
 
       <div class="player-list" *ngIf="!isLoading() && allPlayers().length > 0">

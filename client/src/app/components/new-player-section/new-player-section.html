@@ -1,5 +1,5 @@
 <section class="player-form-card">
-  <h2>Add New Player</h2>
+  <h2>Ajouter nouveau joueur</h2>
 
   <form (submit)="$event.preventDefault(); createPlayer()">
     <div class="form-group">
@@ -15,7 +15,7 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="driveTaken">Drives Taken</label>
+        <label for="driveTaken">Drives pris</label>
         <input
           id="driveTaken"
           type="number"
@@ -26,7 +26,7 @@
       </div>
 
       <div class="form-group">
-        <label for="drivePar3">Par 3 Drives</label>
+        <label for="drivePar3">Par 3 Drives pris</label>
         <input
           id="drivePar3"
           type="number"
@@ -38,7 +38,7 @@
     </div>
 
     <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
-      {{ isSubmitting() ? 'Creating...' : 'Create Player' }}
+      {{ isSubmitting() ? 'Création en cours...' : 'Créer joueur' }}
     </button>
 
     <p
