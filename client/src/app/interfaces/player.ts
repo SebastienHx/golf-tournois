@@ -19,6 +19,7 @@ export interface PlayerDuo {
     totalScore: number; //TODO: +3 for victory per day, to sum  for final result
     teamColor: TeamEnum;
     adjustScore: number;
+    handicap: number;
     id: string;
 }
 

@@ -66,6 +66,6 @@ export class ScoreModal {
 
   getGrossTotalScore(): number {
     if (!this.duo) return 0;
-    return this.duo.stats.reduce((acc, h) => acc + (h.score || 0), 0);
+    return this.duo.stats.reduce((acc, h) => acc + (h.score || 0), 0) + this.duo.handicap;
   }
 }

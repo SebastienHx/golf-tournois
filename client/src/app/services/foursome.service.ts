@@ -9,6 +9,8 @@ interface SavedFoursome {
   bluePlayers?: Player[];
   whiteScore?: number;
   blueScore?: number;
+  whiteHandicap?: number;
+  blueHandicap?: number;
   whiteStats?: any[];
   blueStats?: any[];
 }

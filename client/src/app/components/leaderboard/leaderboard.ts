@@ -15,7 +15,6 @@ export class Leaderboard implements OnInit, OnChanges {
     @Input() duos: PlayerDuo[] = [];
     readonly TeamEnum = TeamEnum;
 
-    sortedDuos: PlayerDuo[] = [];
     isModalOpen = false;
     selectedDuo: PlayerDuo | null = null;
 
@@ -30,8 +29,7 @@ export class Leaderboard implements OnInit, OnChanges {
     }
 
     private updateSortedDuos(): void {
-      // Keep internal sorted copy without mutating input reference
-      this.sortedDuos = [...(this.duos || [])].sort((a, b) => a.totalScore - b.totalScore);
+      this.duos = [...(this.duos || [])].sort((a, b) => a.totalScore - b.totalScore);
     }
 
     openDetails(duo: PlayerDuo): void {

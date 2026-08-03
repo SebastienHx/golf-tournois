@@ -34,7 +34,7 @@ export class FoursomeComponent {
 
     getGrossTotalScore(duo: PlayerDuo): number {
         if (!duo || !duo.stats) return 0;
-        return duo.stats.reduce((acc, h) => acc + (h.score || 0), 0);
+        return duo.stats.reduce((acc, h) => acc + (h.score || 0), 0) + duo.handicap;
     }
 
     openDetails(duo: PlayerDuo): void {
@@ -53,9 +53,9 @@ export class FoursomeComponent {
         const diff = this.duo2.totalScore - this.duo1.totalScore;
 
         if (diff > 0) {
-            return `BLUE +${diff}`;
+            return `BLUE -${diff}`;
         } else if (diff < 0) {
-            return `WHITE +${Math.abs(diff)}`;
+            return `WHITE -${Math.abs(diff)}`;
         }
         return 'ALL SQUARE';
     }

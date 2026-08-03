@@ -13,6 +13,8 @@ interface FoursomeDraft {
   bluePlayers: Player[];
   whiteScore: number;
   blueScore: number;
+  whiteHandicap: number;
+  blueHandicap: number;
 }
 
 interface TeamPickerState {
@@ -87,6 +89,8 @@ export class FoursomeDuoManagementPage {
       bluePlayers: [],
       whiteScore: 0,
       blueScore: 0,
+      whiteHandicap: 0,
+      blueHandicap: 0,
     };
   }
 
@@ -196,6 +200,28 @@ export class FoursomeDuoManagementPage {
     });
 
     this.activePicker.set(null);
+  }
+
+  updateHandicap(foursomeId: number, team: TeamName, value: string): void {
+    const dayFoursomes = this.getFoursomesForSelectedDay();
+    const nextFoursomes = dayFoursomes.map((entry) => {
+      if (entry.id !== foursomeId) {
+        return entry;
+      }
+
+      const handicapValue = Number.parseInt(value, 10) || 0;
+
+      return {
+        ...entry,
+        whiteHandicap: team === 'WHITE' ? handicapValue : entry.whiteHandicap,
+        blueHandicap: team === 'BLUE' ? handicapValue : entry.blueHandicap,
+      };
+    });
+
+    this.foursomesByDay.set({
+      ...this.foursomesByDay(),
+      [this.selectedDay()]: nextFoursomes,
+    });
   }
 
   removePlayerFromTeam(foursomeId: number, team: TeamName, playerId: string): void {

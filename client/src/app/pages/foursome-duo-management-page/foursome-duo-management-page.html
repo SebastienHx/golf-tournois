@@ -27,6 +27,16 @@
       <div class="team-layout">
         <div class="team-panel white-panel" (click)="toggleTeamPicker(foursome.id, 'WHITE')">
           <h3>équipe BLANCHE</h3>
+
+          <label class="handicap-field">
+            Handicap
+            <input
+              type="number"
+              [value]="foursome.whiteHandicap"
+              (input)="updateHandicap(foursome.id, 'WHITE', $any($event.target).value)"
+              (click)="$event.stopPropagation()" />
+          </label>
+
           <div class="player-chip-list">
             <span class="player-chip" *ngFor="let player of foursome.whitePlayers">
               {{ player.name }}
@@ -37,7 +47,17 @@
         </div>
 
         <div class="team-panel blue-panel" (click)="toggleTeamPicker(foursome.id, 'BLUE')">
-          <h3>équipe BLUE</h3>
+          <h3>équipe BLEUE</h3>
+
+          <label class="handicap-field">
+            Handicap
+            <input
+              type="number"
+              [value]="foursome.blueHandicap"
+              (input)="updateHandicap(foursome.id, 'BLUE', $any($event.target).value)"
+              (click)="$event.stopPropagation()" />
+          </label>
+
           <div class="player-chip-list">
             <span class="player-chip" *ngFor="let player of foursome.bluePlayers">
               {{ player.name }}

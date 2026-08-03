@@ -13,6 +13,8 @@ interface SavedFoursome {
   bluePlayers?: Player[];
   whiteScore?: number;
   blueScore?: number;
+  whiteHandicap?: number;
+  blueHandicap?: number;
   whiteStats?: any[];
   blueStats?: any[];
 }
@@ -61,7 +63,7 @@ export class BoardPage implements OnInit {
     };
   }
 
-  private buildDuoFromTeam(teamPlayers: Player[], teamColor: TeamEnum, stats: any[] = [], score: number = 0): PlayerDuo {
+  private buildDuoFromTeam(teamPlayers: Player[], teamColor: TeamEnum, stats: any[] = [], score: number = 0, handicap: number = 0): PlayerDuo {
     const player1 = teamPlayers[0] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
     const player2 = teamPlayers[1] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
 
@@ -70,8 +72,9 @@ export class BoardPage implements OnInit {
       player1,
       player2,
       teamColor,
-      totalScore: score,
-      adjustScore: 0,
+      totalScore: score + handicap,
+      adjustScore: handicap,
+      handicap,
       lastHole: this.getFallbackHoleStats(stats),
       stats: stats ?? [],
     };
@@ -82,23 +85,37 @@ export class BoardPage implements OnInit {
     this.foursomes = [];
 
     this.foursomeService.getFoursomeByDay(day).subscribe({
-      next: (foursomes) => {
+      next: (foursomes: Array<{
+        whitePlayers?: Player[];
+        bluePlayers?: Player[];
+        whiteScore?: number;
+        blueScore?: number;
+        whiteHandicap?: number;
+        blueHandicap?: number;
+        whiteStats?: any[];
+        blueStats?: any[];
+      }>) => {
         const duoList: PlayerDuo[] = [];
         const pairedFoursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
 
         (foursomes ?? []).forEach((foursome, index) => {
+          const whiteHandicap = Number(foursome.whiteHandicap ?? 0);
+          const blueHandicap = Number(foursome.blueHandicap ?? 0);
+
           const whiteDuo = this.buildDuoFromTeam(
             foursome.whitePlayers ?? [],
             TeamEnum.WHITE,
             foursome.whiteStats ?? [],
-            foursome.whiteScore ?? 0
+            foursome.whiteScore ?? 0,
+            whiteHandicap,
           );
 
           const blueDuo = this.buildDuoFromTeam(
             foursome.bluePlayers ?? [],
             TeamEnum.BLUE,
             foursome.blueStats ?? [],
-            foursome.blueScore ?? 0
+            foursome.blueScore ?? 0,
+            blueHandicap,
           );
 
           duoList.push(whiteDuo, blueDuo);

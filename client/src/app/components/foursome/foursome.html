@@ -19,7 +19,7 @@
       <div class="score-block-wrapper">
         <div class="score-block team-blue-bg">
           <span class="team-label text-blue">BLUE</span>
-          <span class="score-val" [ngClass]="getScoreClass(duo1.totalScore)">
+          <span class="score-val" [ngClass]="getScoreClass(duo1.totalScore+duo1.handicap)">
             {{ formatScore(duo1.totalScore) }}
           </span>
         </div>
@@ -46,7 +46,7 @@
       <div class="score-block-wrapper">
         <div class="score-block team-white-bg">
           <span class="team-label text-white">WHITE</span>
-          <span class="score-val" [ngClass]="getScoreClass(duo2.totalScore)">
+          <span class="score-val" [ngClass]="getScoreClass(duo2.totalScore+duo2.handicap)">
             {{ formatScore(duo2.totalScore) }}
           </span>
         </div>

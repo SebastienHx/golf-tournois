@@ -21,6 +21,8 @@ export class FoursomeService {
             ...foursome,
             whiteScore: Number(foursome?.whiteScore ?? 0),
             blueScore: Number(foursome?.blueScore ?? 0),
+            whiteHandicap: Number(foursome?.whiteHandicap ?? 0),
+            blueHandicap: Number(foursome?.blueHandicap ?? 0),
             whiteHolesStates: foursome.whiteHolesStates ?? [],
             blueHolesStates: foursome.blueHolesStates ?? [],
         };
