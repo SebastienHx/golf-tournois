@@ -3,6 +3,7 @@ import { NgClass } from '@angular/common';
 import { PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
 import { HoleStats } from '@app/interfaces/hole-stats';
+import { FIELD_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
 
 @Component({
   selector: 'app-score-modal',
@@ -13,6 +14,7 @@ import { HoleStats } from '@app/interfaces/hole-stats';
 })
 export class ScoreModal {
   @Input() duo: PlayerDuo | null = null;
+  @Input() day: number = 1;
   @Output() closed = new EventEmitter<void>();
   readonly TeamEnum = TeamEnum;
 
@@ -32,10 +34,9 @@ export class ScoreModal {
     return 'score-even';
   }
 
-  getHolePar(holeNum: number, isPar3: boolean): number {
-    if (isPar3) return 3;
-    if (holeNum === 4 || holeNum === 8 || holeNum === 13 || holeNum === 17) return 5;
-    return 4;
+  getHolePar(holeNum: number): number {
+    const day = this.day == 2 ? 2 : 1; 
+    return FIELD_INFO_2026[day][holeNum-1].par;
   }
 
   getHoleByNumber(holeNum: number): HoleStats | undefined {
@@ -44,7 +45,7 @@ export class ScoreModal {
 
   getScoreCellClass(holeNum: number, hole: HoleStats | undefined): string {
     if (!hole || hole.score === undefined || hole.score === null) return '';
-    const par = this.getHolePar(holeNum, hole.isPar3);
+    const par = this.getHolePar(holeNum);
     if (hole.score < par) return 'cell-birdie';
     if (hole.score > par) return 'cell-bogey';
     return '';
@@ -53,7 +54,7 @@ export class ScoreModal {
   getHalfTotalPar(holes: number[]): number {
     return holes.reduce((acc, hNum) => {
       const hole = this.getHoleByNumber(hNum);
-      return acc + this.getHolePar(hNum, hole?.isPar3 || false);
+      return acc + this.getHolePar(hNum);
     }, 0);
   }
 

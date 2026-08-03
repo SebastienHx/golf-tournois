@@ -1,0 +1,47 @@
+export const FIELD_INFO_2026 = {
+    1:[
+    { number: 1, par: 4, yards: 378 },
+    { number: 2, par: 4, yards: 383 },
+    { number: 3, par: 5, yards: 521 },
+    { number: 4, par: 4, yards: 339 },
+    { number: 5, par: 3, yards: 144 },
+    { number: 6, par: 4, yards: 370 },
+    { number: 7, par: 4, yards: 312 },
+    { number: 8, par: 3, yards: 187 },
+    { number: 9, par: 4, yards: 359 },
+    { number: 10, par: 3, yards: 173 },
+    { number: 11, par: 4, yards: 405 },
+    { number: 12, par: 4, yards: 296 },
+    { number: 13, par: 4, yards: 362 },
+    { number: 14, par: 4, yards: 350 },
+    { number: 15, par: 3, yards: 130 },
+    { number: 16, par: 5, yards: 448 },
+    { number: 17, par: 4, yards: 356 },
+    { number: 18, par: 5, yards: 515 },
+  ],
+  2: [
+    { number: 1, par: 4, yards: 328 },
+    { number: 2, par: 3, yards: 135 },
+    { number: 3, par: 4, yards: 285 },
+    { number: 4, par: 4, yards: 413 },
+    { number: 5, par: 4, yards: 351 },
+    { number: 6, par: 4, yards: 346 },
+    { number: 7, par: 5, yards: 524 },
+    { number: 8, par: 4, yards: 424 },
+    { number: 9, par: 3, yards: 199 },
+    { number: 10, par: 4, yards: 280 },
+    { number: 11, par: 4, yards: 446 },
+    { number: 12, par: 4, yards: 364 },
+    { number: 13, par: 5, yards: 542 },
+    { number: 14, par: 4, yards: 391 },
+    { number: 15, par: 4, yards: 365 },
+    { number: 16, par: 3, yards: 155 },
+    { number: 17, par: 4, yards: 413 },
+    { number: 18, par: 4, yards: 307 },
+  ],
+}
+
+export const PAR_INFO_2026 = {
+    1: 71,
+    2: 71
+}

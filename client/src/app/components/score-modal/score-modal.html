@@ -23,7 +23,7 @@
             <tr>
               <th>Par</th>
               @for (h of [1,2,3,4,5,6,7,8,9]; track h) {
-                <td>{{ getHolePar(h, getHoleByNumber(h)?.isPar3 || false) }}</td>
+                <td>{{ getHolePar(h) }}</td>
               }
             </tr>
             <tr class="row-scr">
@@ -53,7 +53,7 @@
             <tr>
               <th>Par</th>
               @for (h of [10,11,12,13,14,15,16,17,18]; track h) {
-                <td>{{ getHolePar(h, getHoleByNumber(h)?.isPar3 || false) }}</td>
+                <td>{{ getHolePar(h) }}</td>
               }
             </tr>
             <tr class="row-scr">

@@ -1,0 +1,296 @@
+:host {
+  --primary-green: #1b5e3b;
+  --light-green-bg: #e8f1ec;
+  --text-muted: #839593;
+  --text-dark: #1f2937;
+  --border-color: #d1ded8;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: block;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.score-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.day-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+}
+
+.day-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #475569;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.day-pill.is-selected {
+  background: linear-gradient(135deg, #0f766e, #10b981);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+}
+
+/* Header */
+.title-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b827b;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.pencil-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Dropdown */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.team-select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Summary Box */
+.summary-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--light-green-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 20px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.to-par-value {
+  color: var(--primary-green);
+}
+
+.summary-divider {
+  width: 1px;
+  height: 32px;
+  background-color: var(--border-color);
+}
+
+/* Hole Pill Selector */
+.hole-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none; /* Firefox */
+}
+
+.hole-selector::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.hole-btn {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--light-green-bg);
+  color: var(--primary-green);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hole-btn.active {
+  background-color: var(--primary-green);
+  color: #ffffff;
+}
+
+/* Hole Card */
+.hole-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+
+.hole-card-header {
+  display: flex;
+  align-items: center;
+}
+
+.hole-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--primary-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: 12px;
+}
+
+.hole-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.par-text {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 14px;
+}
+
+.yards-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.score-label {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-dark);
+}
+
+/* Stepper Controls */
+.stepper-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0 8px 0;
+}
+
+.step-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  font-size: 24px;
+  color: var(--text-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-display {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+/* Clear Action */
+.clear-container {
+  display: flex;
+  justify-content: center;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.trash-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Navigation Bar */
+.navigation-bar {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  font-weight: 700;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

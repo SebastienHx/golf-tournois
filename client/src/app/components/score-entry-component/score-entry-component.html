@@ -1,0 +1,113 @@
+<div class="score-container">
+  <!-- Header Title -->
+  <div class="title-header">
+    <svg class="pencil-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+    </svg>
+    <span>SCORE ENTRY</span>
+  </div>
+
+  <div class="day-selector" aria-label="Select tournament day">
+    <button
+      type="button"
+      class="day-pill"
+      [class.is-selected]="selectedDay === 1"
+      (click)="selectDay(1)">
+      Jour 1
+    </button>
+
+    <button
+      type="button"
+      class="day-pill"
+      [class.is-selected]="selectedDay === 2"
+      (click)="selectDay(2)">
+      Jour 2
+    </button>
+  </div>
+
+  <!-- Team Dropdown -->
+  <div class="select-wrapper">
+    <select [(ngModel)]="selectedTeamId" class="team-select">
+      <option *ngFor="let team of duoList" [value]="team.id">
+        {{ team.name }}
+      </option>
+    </select>
+    <span class="dropdown-arrow">▼</span>
+  </div>
+
+  <!-- Summary Stats Box -->
+  <div class="summary-card">
+    <div class="summary-item">
+      <span class="summary-label">FRONT</span>
+      <span class="summary-value">{{ frontNineTotal }}</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">BACK</span>
+      <span class="summary-value">{{ backNineTotal }}</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">TOTAL</span>
+      <span class="summary-value">{{ totalScore }}</span>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <span class="summary-label">TO PAR</span>
+      <span class="summary-value to-par-value">{{ toPar }}</span>
+    </div>
+  </div>
+
+  <!-- Hole Selector Bar -->
+  <div class="hole-selector">
+    <button 
+      *ngFor="let hole of holes" 
+      class="hole-btn" 
+      [class.active]="hole.number === selectedHoleNum"
+      (click)="selectHole(hole.number)">
+      {{ hole.number }}
+    </button>
+  </div>
+
+  <!-- Main Score Box -->
+  <div class="hole-card">
+    <div class="hole-card-header">
+      <div class="hole-badge">{{ currentHole.number }}</div>
+      <div class="hole-info">
+        <div class="par-text">Par {{ currentHole.par }}</div>
+        <div class="yards-text">{{ currentHole.yards }} yds</div>
+      </div>
+      <div class="score-label">{{ scoreLabel }}</div>
+    </div>
+
+    <!-- Stepper Controls -->
+    <div class="stepper-container">
+      <button class="step-btn" (click)="decrementScore()">−</button>
+      <div class="score-display">
+        {{ currentScore !== null ? currentScore : '-' }}
+      </div>
+      <button class="step-btn" (click)="incrementScore()">+</button>
+    </div>
+
+    <!-- Clear Action -->
+    <div class="clear-container">
+      <button class="clear-btn" (click)="clearScore()">
+        <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="navigation-bar">
+    <button class="nav-btn" [disabled]="selectedHoleNum === 1" (click)="prevHole()">
+      ‹ Prev
+    </button>
+    <button class="nav-btn" [disabled]="selectedHoleNum === holes.length" (click)="nextHole()">
+      Next ›
+    </button>
+  </div>
+</div>

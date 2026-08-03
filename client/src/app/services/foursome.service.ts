@@ -29,6 +29,10 @@ export class FoursomeService {
         return this.http.get<SavedFoursome[]>(`${this.url}/${day}`);
     }
 
+    saveFoursomesForDay(day: number, foursomes: SavedFoursome[]) {
+        return this.http.put(`${this.url}/${day}`, { foursomes });
+    }
+
     getPlayerById(playerId: string) {
         return this.http.get<Player>(`${this.url}/${playerId}`);
     }

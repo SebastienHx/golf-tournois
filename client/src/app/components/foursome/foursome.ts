@@ -3,6 +3,7 @@ import { NgClass } from '@angular/common';
 import { PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
 import { ScoreModal } from '../score-modal/score-modal';
+import { PAR_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
 
 @Component({
     selector: 'app-foursome',
@@ -15,20 +16,27 @@ export class FoursomeComponent {
     @Input() title: string = 'FOURSOME 1';
     @Input() duo1!: PlayerDuo;
     @Input() duo2!: PlayerDuo;
+    @Input() day: number = 1;
 
     readonly TeamEnum = TeamEnum;
     selectedDuo: PlayerDuo | null = null;
     isModalOpen = false;
 
     formatScore(score: number): string {
-        if (score > 0) return `+${score}`;
-        if (score === 0) return 'E';
+        const day = this.day == 2 ? 2 : 1; 
+        const adjustScore = score - (PAR_INFO_2026[day]);
+
+        if (adjustScore > 0) return `+${score}`;
+        if (adjustScore === 0) return 'E';
         return `${score}`;
     }
 
     getScoreClass(score: number): string {
-        if (score < 0) return 'score-under';
-        if (score > 0) return 'score-over';
+        const day = this.day == 2 ? 2 : 1; 
+        const adjustScore = score - (PAR_INFO_2026[day]);
+
+        if (adjustScore < 0) return 'score-under';
+        if (adjustScore > 0) return 'score-over';
         return 'score-even';
     }
 

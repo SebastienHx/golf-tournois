@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { Player } from '@app/interfaces/player';
+import { FoursomeService } from '@app/services/foursome.service';
 import { PlayerService } from '@app/services/player.service';
 
 type TeamName = 'WHITE' | 'BLUE';
@@ -38,7 +38,7 @@ export class FoursomeDuoManagementPage {
 
   constructor(
     private readonly playerService: PlayerService,
-    private readonly http: HttpClient,
+    private readonly foursomeService: FoursomeService,
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +66,7 @@ export class FoursomeDuoManagementPage {
   }
 
   loadFoursomesForSelectedDay(): void {
-    this.http.get<FoursomeDraft[]>(`http://localhost:3000/api/foursome/day/${this.selectedDay()}`).subscribe({
+    this.foursomeService.getFoursomeByDay(this.selectedDay()).subscribe({
       next: (foursomes) => {
         this.foursomesByDay.set({
           ...this.foursomesByDay(),
@@ -249,7 +249,7 @@ export class FoursomeDuoManagementPage {
 
   saveFoursomesForSelectedDay(): void {
     const foursomes = this.getFoursomesForSelectedDay();
-    this.http.put(`http://localhost:3000/api/foursome/day/${this.selectedDay()}`, { foursomes }).subscribe({
+    this.foursomeService.saveFoursomesForDay(this.selectedDay(), foursomes).subscribe({
       next: () => {
         console.log('Foursomes saved successfully');
       },

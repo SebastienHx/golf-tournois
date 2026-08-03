@@ -3,6 +3,7 @@ import { PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
 import { NgClass } from '@angular/common';
 import { ScoreModal } from '../score-modal/score-modal';
+import { FIELD_INFO_2026, PAR_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
 
 @Component({
     selector: 'app-leaderboard',
@@ -13,6 +14,7 @@ import { ScoreModal } from '../score-modal/score-modal';
 })
 export class Leaderboard implements OnInit, OnChanges {
     @Input() duos: PlayerDuo[] = [];
+    @Input() day: number = 1;
     readonly TeamEnum = TeamEnum;
 
     isModalOpen = false;
@@ -43,14 +45,20 @@ export class Leaderboard implements OnInit, OnChanges {
     }
 
     formatScore(score: number): string {
-        if (score > 0) return `+${score}`;
-        if (score === 0) return 'E';
+        const day = this.day == 2 ? 2 : 1; 
+        const adjustScore = score - (PAR_INFO_2026[day]);
+
+        if (adjustScore > 0) return `+${score}`;
+        if (adjustScore === 0) return 'E';
         return `${score}`;
     }
 
     getScoreClass(score: number): string {
-        if (score < 0) return 'score-under';
-        if (score > 0) return 'score-over';
+        const day = this.day == 2 ? 2 : 1; 
+        const adjustScore = score - (PAR_INFO_2026[day]);
+
+        if (adjustScore < 0) return 'score-under';
+        if (adjustScore > 0) return 'score-over';
         return 'score-even';
     }
 }
