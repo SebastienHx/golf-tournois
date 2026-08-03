@@ -3,7 +3,7 @@ import { NgClass } from '@angular/common';
 import { PlayerDuo } from '@app/interfaces/player';
 import { TeamEnum } from '@app/interfaces/team';
 import { ScoreModal } from '../score-modal/score-modal';
-import { PAR_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
+import { FIELD_INFO_2026, PAR_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
 
 @Component({
     selector: 'app-foursome',
@@ -22,13 +22,20 @@ export class FoursomeComponent {
     selectedDuo: PlayerDuo | null = null;
     isModalOpen = false;
 
-    formatScore(score: number): string {
+    formatScore(score: number, duo: PlayerDuo): string {
         const day = this.day == 2 ? 2 : 1; 
-        const adjustScore = score - (PAR_INFO_2026[day]);
+        const totalPar = duo.stats.reduce((acc, hole) => {
+            const dayHoles = FIELD_INFO_2026[day as keyof typeof FIELD_INFO_2026];
+            const holeData = dayHoles?.find((h) => h.number === hole.holeNumber);
 
-        if (adjustScore > 0) return `+${score}`;
+            return acc + (holeData?.par ?? 0);
+        }, 0);
+        const adjustScore = score - totalPar;
+
+
+        if (adjustScore > 0) return `+${adjustScore}`;
         if (adjustScore === 0) return 'E';
-        return `${score}`;
+        return `${adjustScore}`;
     }
 
     getScoreClass(score: number): string {
