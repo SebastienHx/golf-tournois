@@ -33,6 +33,7 @@ type DriveCounterField =
 })
 export class ScoreEntryComponent implements OnInit {
   readonly dayStorageKey = 'golf-board-selected-day';
+  readonly teamStorageKeyPrefix = 'golf-board-selected-team';
 
   holes: HoleInfo[] = [];
 
@@ -75,6 +76,15 @@ export class ScoreEntryComponent implements OnInit {
     return savedDay === 1 || savedDay === 2 ? savedDay : 1;
   }
 
+  private getStoredTeamId(): string {
+    return localStorage.getItem(`${this.teamStorageKeyPrefix}-${this.selectedDay}`) ?? '';
+  }
+
+  saveSelectedTeam(teamId: string): void {
+    this.selectedTeamId = teamId;
+    localStorage.setItem(`${this.teamStorageKeyPrefix}-${this.selectedDay}`, teamId);
+  }
+
   private loadDayFoursomes(): void {
     this.selectedTeamId = '';
     this.duoList = [];
@@ -107,7 +117,8 @@ export class ScoreEntryComponent implements OnInit {
           ];
         });
 
-        this.selectedTeamId = this.duoList[0]?.id ?? '';
+        const savedTeamId = this.getStoredTeamId();
+        this.selectedTeamId = this.duoList.some((team) => team.id === savedTeamId) ? savedTeamId : '';
         this.cdr.markForCheck();
       },
       error: (err) => {

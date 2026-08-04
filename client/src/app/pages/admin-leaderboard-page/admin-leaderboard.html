@@ -1,0 +1,128 @@
+<div class="leaderboard-container">
+  <!-- Header Title -->
+  <div class="title-header">
+    <svg class="trophy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16"></path>
+      <path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+    </svg>
+    <span>ADMIN LEADERBOARD</span>
+  </div>
+
+  <!-- Day Switcher Segmented Control -->
+  <div class="day-toggle-container">
+    <button 
+      class="day-btn" 
+      [class.active]="selectedDay === 1" 
+      (click)="setDay(1)">
+      Day 1
+    </button>
+    <button 
+      class="day-btn" 
+      [class.active]="selectedDay === 2" 
+      (click)="setDay(2)">
+      Day 2
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="state-message">
+    Loading tournament stats...
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="state-message error-text">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Challenge Cards Grid -->
+  <div class="challenges-grid" *ngIf="!isLoading && !errorMessage">
+    
+    <!-- Challenge 1: Best Score -->
+    <div class="challenge-card highlight-card">
+      <div class="card-header">
+        <div class="badge-icon best-score-bg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <div>
+          <h3>Meilleur Pointage</h3>
+          <p class="subtitle">Meilleur duo</p>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.bestScore }"></ng-container>
+    </div>
+
+    <!-- Challenge 2: Least Putts -->
+    <div class="challenge-card">
+      <div class="card-header">
+        <div class="badge-icon standard-bg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <div>
+          <h3>Le moins de Putts</h3>
+          <p class="subtitle">Précision sur le vert</p>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.leastPutts }"></ng-container>
+    </div>
+
+    <!-- Challenge 3: Most Hazards -->
+    <div class="challenge-card">
+      <div class="card-header">
+        <div class="badge-icon hazard-bg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Le plus hors-champ</h3>
+          <p class="subtitle">Eau, sable, & pénalités</p>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.mostHazards }"></ng-container>
+    </div>
+
+    <!-- Challenge 4: Most On Fairway -->
+    <div class="challenge-card">
+      <div class="card-header">
+        <div class="badge-icon fairway-bg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="m9 12 2 2 4-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>Le plus sur le Fairway</h3>
+          <p class="subtitle">Fairways réussi sur trous Par 4 & Par 5</p>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.mostOnFairway }"></ng-container>
+    </div>
+
+  </div>
+</div>
+
+<!-- Reusable Leaderboard List Template -->
+<ng-template #leaderboardList let-entries="entries">
+  <div class="entry-list" *ngIf="entries && entries.length > 0; else emptyState">
+    <div class="entry-item" *ngFor="let entry of entries; let i = index" [class.winner]="i === 0">
+      <div class="rank-badge" [class.rank-1]="i === 0">{{ i + 1 }}</div>
+      <div class="duo-info">
+        <span class="duo-name">{{ entry.player1 }} & {{ entry.player2 }}</span>
+      </div>
+      <div class="stat-badge">
+        {{ entry.statValue }}
+      </div>
+    </div>
+  </div>
+  <ng-template #emptyState>
+    <div class="empty-msg">Aucune entrée pour le jour {{ selectedDay }}.</div>
+  </ng-template>
+</ng-template>

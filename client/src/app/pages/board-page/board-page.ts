@@ -28,6 +28,7 @@ interface SavedFoursome {
 })
 export class BoardPage implements OnInit {
   readonly dayStorageKey = 'golf-board-selected-day';
+  readonly TeamEnum = TeamEnum;
 
   leaderboardData: PlayerDuo[] = [];
   foursomes: Array<{ title: string; duo1: PlayerDuo; duo2: PlayerDuo }> = [];
@@ -38,7 +39,7 @@ export class BoardPage implements OnInit {
   ngOnInit(): void {
     this.loadDayFoursomes(this.selectedDay);
   }
-
+  
   selectDay(day: number): void {
     this.selectedDay = day;
     localStorage.setItem(this.dayStorageKey, String(day));
@@ -78,6 +79,62 @@ export class BoardPage implements OnInit {
       lastHole: this.getFallbackHoleStats(stats),
       stats: stats ?? [],
     };
+  }
+
+  private getTeamDuoForFoursome(foursome: { duo1: PlayerDuo; duo2: PlayerDuo }, teamColor: TeamEnum): PlayerDuo | null {
+    if (!foursome) return null;
+    if (foursome.duo1?.teamColor === teamColor) return foursome.duo1;
+    if (foursome.duo2?.teamColor === teamColor) return foursome.duo2;
+    return null;
+  }
+
+  getGlobalTeamSummary(teamColor: TeamEnum): { score: number; calculatedHole: number } {
+    if (!this.foursomes.length) {
+      return { score: 0, calculatedHole: 0 };
+    }
+
+    const holeNumbers = new Set<number>();
+    this.foursomes.forEach((foursome) => {
+      const duo = this.getTeamDuoForFoursome(foursome, teamColor);
+      if (!duo) return;
+      duo.stats?.forEach((hole) => {
+        if (hole?.holeNumber) {
+          holeNumbers.add(hole.holeNumber);
+        }
+      });
+    });
+
+    let totalScore = 0;
+    let calculatedHole = 0;
+
+    [...holeNumbers]
+      .sort((a, b) => a - b)
+      .forEach((holeNumber) => {
+        const isHoleComplete = this.foursomes.every((foursome) => {
+          const duo = this.getTeamDuoForFoursome(foursome, teamColor);
+          return !!duo?.stats?.some((hole) => hole.holeNumber === holeNumber);
+        });
+
+        if (!isHoleComplete) {
+          return;
+        }
+
+        const bestScoreForHole = this.foursomes
+          .map((foursome) => this.getTeamDuoForFoursome(foursome, teamColor))
+          .filter((duo): duo is PlayerDuo => !!duo)
+          .map((duo) => duo.stats.find((hole) => hole.holeNumber === holeNumber)?.score ?? Number.POSITIVE_INFINITY)
+          .filter((score) => Number.isFinite(score))
+          .reduce((best, current) => Math.min(best, current), Number.POSITIVE_INFINITY);
+
+        if (!Number.isFinite(bestScoreForHole)) {
+          return;
+        }
+
+        totalScore += bestScoreForHole;
+        calculatedHole = holeNumber;
+      });
+
+    return { score: totalScore, calculatedHole };
   }
 
   private loadDayFoursomes(day: number): void {

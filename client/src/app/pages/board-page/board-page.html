@@ -20,6 +20,22 @@
   </button>
 </div>
 
+@if (foursomes.length) {
+  <div class="global-team-summary" aria-label="Global team score summary">
+    <div class="team-summary blue-team">
+      <span class="team-name">Blue</span>
+      <strong>{{ getGlobalTeamSummary(TeamEnum.BLUE).score }}</strong>
+      <small>Trou {{ getGlobalTeamSummary(TeamEnum.BLUE).calculatedHole || 0 }}</small>
+    </div>
+
+    <div class="team-summary white-team">
+      <span class="team-name">White</span>
+      <strong>{{ getGlobalTeamSummary(TeamEnum.WHITE).score }}</strong>
+      <small>Trou {{ getGlobalTeamSummary(TeamEnum.WHITE).calculatedHole || 0 }}</small>
+    </div>
+  </div>
+}
+
 <div class="leaderboard-section">
   <app-leaderboard [duos]="leaderboardData" [day]="selectedDay"></app-leaderboard>
 </div>

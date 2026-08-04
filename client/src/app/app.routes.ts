@@ -29,5 +29,9 @@ export const routes: Routes = [
     {
         path: 'player-management-page',
         loadComponent: () => import('@app/pages/player-management-page/player-management-page').then(m => m.PlayerManagementPage)
+    },
+    {
+        path: 'admin-leaderboard-page',
+        loadComponent: () => import('@app/pages/admin-leaderboard-page/admin-leaderboard').then(m => m.AdminLeaderboardComponent)
     }
 ];

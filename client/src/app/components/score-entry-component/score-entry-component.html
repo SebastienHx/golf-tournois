@@ -27,7 +27,11 @@
 
   <!-- Team Dropdown -->
   <div class="select-wrapper">
-    <select [(ngModel)]="selectedTeamId" class="team-select">
+    <select
+      [(ngModel)]="selectedTeamId"
+      class="team-select"
+      (ngModelChange)="saveSelectedTeam($event)">
+      <option value="">Choisir une équipe...</option>
       <option *ngFor="let team of duoList" [value]="team.id">
         {{ team.name }}
       </option>

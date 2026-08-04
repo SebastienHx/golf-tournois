@@ -26,4 +26,7 @@ export class AdminPage {
   openFoursomeDuoManagement(): void {
     this.router.navigate(['/foursome-duo-management-page']);
   }
+  openDetailedScoreTournament(): void {
+    this.router.navigate(['/admin-leaderboard-page']);
+  }
 }
