@@ -101,6 +101,58 @@
     </div>
   </div>
 
+  <div class="hole-extra-fields">
+    <div class="field-row">
+      <label class="field-label" for="drive-taken-by">Drive prise par</label>
+      <select
+        id="drive-taken-by"
+        class="field-input"
+        [ngModel]="currentHoleStats?.driveTakenBy ?? ''"
+        (ngModelChange)="updateHoleField('driveTakenBy', $event)">
+        <option value="">Sélectionner un joueur...</option>
+        <option *ngFor="let player of currentTeamPlayers" [value]="player.id">
+          {{ player.name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="checkbox-grid">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [checked]="currentHoleStats?.hasHitInFairway ?? false"
+          (change)="updateHoleField('hasHitInFairway', $any($event.target).checked)"
+        />
+        Fairway
+      </label>
+
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [checked]="currentHoleStats?.hasHitInHazard ?? false"
+          (change)="updateHoleField('hasHitInHazard', $any($event.target).checked)"
+        />
+        Eau/Sable
+      </label>
+    </div>
+
+    <div class="field-row">
+      <label class="field-label" for="putts-count">Putts</label>
+      <input
+        id="putts-count"
+        class="field-input number-input"
+        type="number"
+        min="0"
+        [ngModel]="currentHoleStats?.nbrOfPutt ?? 0"
+        (ngModelChange)="updateHoleField('nbrOfPutt', $event)"
+      />
+    </div>
+
+    <div class="drive-requirement" [attr.data-par3]="currentHole.par === 3">
+      {{ driveRequirementLabel }}
+    </div>
+  </div>
+
   <!-- Navigation Buttons -->
   <div class="navigation-bar">
     <button class="nav-btn" [disabled]="selectedHoleNum === 1" (click)="prevHole()">

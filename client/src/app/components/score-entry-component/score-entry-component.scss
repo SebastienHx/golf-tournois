@@ -108,6 +108,7 @@
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 20px;
+  height: 32px;
 }
 
 .summary-item {
@@ -273,10 +274,79 @@
   height: 14px;
 }
 
+.hole-extra-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8faf8;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.field-input {
+  width: 80%;
+  min-height: 25px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-dark);
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.number-input {
+  appearance: textfield;
+}
+
+.checkbox-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+}
+
+.drive-requirement {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-green);
+  background: rgba(27, 94, 59, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
 /* Navigation Bar */
 .navigation-bar {
   display: flex;
   gap: 12px;
+  margin-bottom: 3.5rem;
 }
 
 .nav-btn {

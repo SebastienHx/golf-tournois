@@ -18,6 +18,12 @@ interface ScoreDuo extends PlayerDuo {
   foursomeId: number;
 }
 
+type DriveCounterField =
+  | 'driveTakenDay1'
+  | 'drivePar3TakenDay1'
+  | 'driveTakenDay2'
+  | 'drivePar3TakenDay2';
+
 @Component({
   selector: 'app-score-entry',
   standalone: true,
@@ -118,12 +124,48 @@ export class ScoreEntryComponent implements OnInit {
     return this.duoList.find((team) => team.id === this.selectedTeamId) ?? this.duoList[0];
   }
 
+  get currentTeamPlayers(): Player[] {
+    const team = this.currentTeam;
+    if (!team) {
+      return [];
+    }
+
+    return [team.player1, team.player2].filter(Boolean);
+  }
+
   get currentHole(): HoleInfo {
     return this.holes.find((hole) => hole.number === this.selectedHoleNum) ?? this.holes[0];
   }
 
+  get currentHoleStats(): HoleStats | undefined {
+    return this.currentTeam?.stats.find((hole) => hole.holeNumber === this.selectedHoleNum);
+  }
+
   get currentScore(): number | null {
     return this.getCurrentHoleScore();
+  }
+
+  get selectedDrivePlayer(): Player | undefined {
+    const playerId = this.currentHoleStats?.driveTakenBy;
+    if (!playerId) {
+      return undefined;
+    }
+
+    return this.currentTeamPlayers.find((player) => player.id === playerId);
+  }
+
+  get driveRequirementLabel(): string {
+    const requiredDrives = this.currentHole.par >= 4 ? 4 : 2;
+    const selectedPlayer = this.selectedDrivePlayer;
+
+    if (!selectedPlayer) {
+      return this.currentHole.par >= 4
+        ? 'Minimum : 4 drives par joueur / jour'
+        : 'Minimum : 2 drives par joueur / jour';
+    }
+
+    const takenDrives = this.getPlayerDriveCount(selectedPlayer, this.currentHole.par >= 4);
+    return `${takenDrives} pris sur ${requiredDrives} requis`;
   }
 
   selectHole(holeNum: number): void {
@@ -155,7 +197,35 @@ export class ScoreEntryComponent implements OnInit {
   }
 
   clearScore(): void {
-    this.setCurrentHoleScore(null);
+    const selectedPlayerId = this.currentHoleStats?.driveTakenBy;
+    if (selectedPlayerId) {
+      this.adjustPlayerDriveCount(selectedPlayerId, -1);
+    }
+
+    this.updateCurrentHoleData({
+      score: 0,
+      driveTakenBy: '',
+      hasHitInFairway: false,
+      hasHitInHazard: false,
+      nbrOfPutt: 0,
+    });
+  }
+
+  updateHoleField<K extends keyof HoleStats>(field: K, value: HoleStats[K]): void {
+    if (field === 'driveTakenBy') {
+      const previousPlayerId = this.currentHoleStats?.driveTakenBy ?? '';
+      const nextPlayerId = String(value ?? '');
+
+      if (previousPlayerId && previousPlayerId !== nextPlayerId) {
+        this.adjustPlayerDriveCount(previousPlayerId, -1);
+      }
+
+      if (nextPlayerId && nextPlayerId !== previousPlayerId) {
+        this.adjustPlayerDriveCount(nextPlayerId, 1);
+      }
+    }
+
+    this.updateCurrentHoleData({ [field]: value } as Partial<HoleStats>);
   }
 
   get frontNineTotal(): number {
@@ -229,7 +299,61 @@ export class ScoreEntryComponent implements OnInit {
     return team.stats.find((hole) => hole.holeNumber === this.selectedHoleNum)?.score ?? null;
   }
 
+  private getDriveCounterField(isRegularHole: boolean): DriveCounterField {
+    if (this.selectedDay === 1) {
+      return isRegularHole ? 'driveTakenDay1' : 'drivePar3TakenDay1';
+    }
+
+    return isRegularHole ? 'driveTakenDay2' : 'drivePar3TakenDay2';
+  }
+
+  private getPlayerDriveCount(player: Player, isRegularHole: boolean): number {
+    const field = this.getDriveCounterField(isRegularHole);
+    return Number((player as Record<DriveCounterField, number>)[field] ?? 0);
+  }
+
+  private adjustPlayerDriveCount(playerId: string, delta: number): void {
+    const team = this.currentTeam;
+    if (!team || !playerId) {
+      return;
+    }
+
+    const isRegularHole = this.currentHole.par >= 4;
+    const driveField = this.getDriveCounterField(isRegularHole);
+    const teamPlayers = [team.player1, team.player2];
+
+    for (const player of teamPlayers) {
+      if (player.id !== playerId) {
+        continue;
+      }
+
+      const previousValue = Number((player as Record<DriveCounterField, number>)[driveField] ?? 0);
+      (player as Record<DriveCounterField, number>)[driveField] = Math.max(0, previousValue + delta);
+      break;
+    }
+
+    const foursomeIndex = this.foursomes.findIndex((foursome) => (foursome.id ?? 0) === team.foursomeId);
+    if (foursomeIndex < 0) {
+      return;
+    }
+
+    const foursome = this.foursomes[foursomeIndex];
+    const playersInFoursome = team.teamColor === TeamEnum.WHITE ? foursome.whitePlayers ?? [] : foursome.bluePlayers ?? [];
+    const matchingPlayer = playersInFoursome.find((player) => player.id === playerId);
+
+    if (!matchingPlayer) {
+      return;
+    }
+
+    const previousValue = Number((matchingPlayer as Record<DriveCounterField, number>)[driveField] ?? 0);
+    (matchingPlayer as Record<DriveCounterField, number>)[driveField] = Math.max(0, previousValue + delta);
+  }
+
   private setCurrentHoleScore(score: number | null): void {
+    this.updateCurrentHoleData({ score: score ?? 0 });
+  }
+
+  private updateCurrentHoleData(partial: Partial<HoleStats>): void {
     const team = this.currentTeam;
     if (!team) {
       return;
@@ -237,18 +361,25 @@ export class ScoreEntryComponent implements OnInit {
 
     const nextStats = [...team.stats];
     const holeIndex = nextStats.findIndex((hole) => hole.holeNumber === this.selectedHoleNum);
-    const nextHole: HoleStats = {
+    const existingHole = nextStats[holeIndex] ?? {
       holeNumber: this.selectedHoleNum,
       isPar3: this.currentHole.par === 3,
       driveTakenBy: '',
       hasHitInFairway: false,
       hasHitInHazard: false,
       nbrOfPutt: 0,
-      score: score ?? 0,
+      score: 0,
+    };
+
+    const nextHole: HoleStats = {
+      ...existingHole,
+      holeNumber: this.selectedHoleNum,
+      isPar3: this.currentHole.par === 3,
+      ...partial,
     };
 
     if (holeIndex >= 0) {
-      nextStats[holeIndex] = { ...nextStats[holeIndex], ...nextHole };
+      nextStats[holeIndex] = nextHole;
     } else {
       nextStats.push(nextHole);
     }
@@ -263,7 +394,6 @@ export class ScoreEntryComponent implements OnInit {
       const isWhite = team.teamColor === TeamEnum.WHITE;
       const statsKey = isWhite ? 'whiteStats' : 'blueStats';
       const scoreKey = isWhite ? 'whiteScore' : 'blueScore';
-      const handicapKey = isWhite ? 'whiteHandicap' : 'blueHandicap';
 
       const nextFoursomeStats = [...(foursome[statsKey] ?? [])];
       const statIndex = nextFoursomeStats.findIndex((hole) => hole.holeNumber === this.selectedHoleNum);
@@ -275,7 +405,7 @@ export class ScoreEntryComponent implements OnInit {
 
       foursome[statsKey] = nextFoursomeStats;
       const total = nextFoursomeStats.reduce((sum, hole) => sum + Number(hole.score ?? 0), 0);
-      foursome[scoreKey] = total ;//+ Number(foursome[handicapKey] ?? 0);
+      foursome[scoreKey] = total;
 
       this.foursomeService.saveFoursomesForDay(this.selectedDay, this.foursomes).subscribe({
         next: () => undefined,
@@ -303,8 +433,8 @@ export class ScoreEntryComponent implements OnInit {
     score: number = 0,
     handicap: number = 0,
   ): ScoreDuo {
-    const player1 = teamPlayers[0] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
-    const player2 = teamPlayers[1] ?? { id: '', name: 'TBD', duoIds: [], driveTaken: 0, drivePar3Taken: 0 };
+    const player1 = this.normalizePlayer(teamPlayers[0], 'TBD 1');
+    const player2 = this.normalizePlayer(teamPlayers[1], 'TBD 2');
 
     return {
       id: `${foursomeId}-${teamColor}`,
@@ -318,6 +448,18 @@ export class ScoreEntryComponent implements OnInit {
       lastHole: this.getFallbackHoleStats(stats),
       stats: stats ?? [],
       name: `${player1.name} et ${player2.name}`,
+    };
+  }
+
+  private normalizePlayer(player: Partial<Player> | undefined, fallbackName: string): Player {
+    return {
+      id: player?.id ?? '',
+      name: player?.name ?? fallbackName,
+      duoIds: player?.duoIds ?? [],
+      driveTakenDay1: Number(player?.driveTakenDay1 ?? 0),
+      drivePar3TakenDay1: Number(player?.drivePar3TakenDay1 ?? 0),
+      driveTakenDay2: Number(player?.driveTakenDay2 ?? 0),
+      drivePar3TakenDay2: Number(player?.drivePar3TakenDay2 ?? 0),
     };
   }
 

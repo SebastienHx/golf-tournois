@@ -7,8 +7,10 @@ export interface Player{
     id: string;
     name: string;
     duoIds: string[]; //list of duos the player is in (day 1 and day 2)
-    driveTaken: number; //min 4 drive taken per player //TODO: Reset after day 1
-    drivePar3Taken: number; //min 2 drive taken per player
+    driveTakenDay1: number; //min 4 drive taken per player
+    drivePar3TakenDay1: number; //min 2 drive taken per player
+    driveTakenDay2: number; //min 4 drive taken per player
+    drivePar3TakenDay2: number; //min 2 drive taken per player
 }
 
 export interface PlayerDuo {
