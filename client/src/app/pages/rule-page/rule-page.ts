@@ -36,8 +36,8 @@ rules: RuleSection[] = [
       isOpen: false,
       content: [
         'Chaque joueur de l\'équipe doit contribuer un nombre minimum de coups de départ (drives) sur l\'ensemble des 18 trous.',
-        'Un minimum *4 drives* par joueur sur des trous Par 4 ou plus doivent être sélectionnés avant la fin de la journée.',
-        'Les drives des trous Par 3 sont comptabilisés séparément.'
+        'Un minimum de *4 drives* doivent être sélectionnés par joueur sur des trous Par 4 et Par 5.',
+        'Un minimum de *2 drives* doivent être sélectionnés par joueur sur des trous Par 3.'
       ]
     },
     {
@@ -58,20 +58,10 @@ rules: RuleSection[] = [
       isOpen: false,
       content: [
         'Les handicaps sont appliqués automatiquement.',
-        'En cas d\'égalité à la fin des 18 trous, le vainqueur sera désigné par un décompte des 9 derniers trous.'
+        'En cas d\'égalité à la fin des 18 trous, les deux duos recevront des points.'
       ]
     },
-    // {
-    //   id: 'etiquette',
-    //   title: '5. Pace of Play & Etiquette',
-    //   icon: '⏱️',
-    //   isOpen: false,
-    //   content: [
-    //     'Please maintain a maximum pace of play of 15 minutes per hole.',
-    //     'Repair all divots, pitch marks on greens, and rake bunkers after play.',
-    //     'In the event of a lost ball, spend no more than 3 minutes searching before playing a local rule drop.'
-    //   ]
-    // }
+
   ];
 
   toggleAccordion(index: number): void {

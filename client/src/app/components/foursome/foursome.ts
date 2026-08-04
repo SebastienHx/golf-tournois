@@ -72,7 +72,7 @@ export class FoursomeComponent {
         } else if (diff < 0) {
             return `WHITE -${Math.abs(diff)}`;
         }
-        return 'ALL SQUARE';
+        return 'ÉGALITÉ';
     }
 
     getMatchStatusClass(): string {
