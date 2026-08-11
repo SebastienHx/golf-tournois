@@ -15,7 +15,6 @@ interface SavedFoursome {
   blueStats?: any[];
 }
 
-// import { environment } from 'src/environments/environment'; //TODO: ADD ENV FILE
 @Injectable({
     providedIn: 'root',
 })
