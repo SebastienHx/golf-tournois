@@ -23,8 +23,8 @@ interface SavedFoursome {
 
 export class FoursomeService {
     // private readonly url = `${environment.serverUrl}/player`;
-    private readonly url = `${environment.apiUrl}/foursome/day`;
-
+    // private readonly url = `${environment.apiUrl}/foursome/day`;
+    private url = (import.meta as any).env['NG_APP_API_URL'];
     constructor(private readonly http: HttpClient) {}
     getFoursomeByDay(day: number) {
         return this.http.get<SavedFoursome[]>(`${this.url}/${day}`);
