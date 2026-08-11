@@ -2,13 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HoleStats } from '@app/interfaces/hole-stats';
 import { Player, PlayerDuo } from '@app/interfaces/player';
-import { environment } from '../../environments/environment';
 @Injectable({
     providedIn: 'root',
 })
 export class PlayerService {
-    // private readonly url = `${environment.serverUrl}/player`;
-    // private readonly url = `${environment.apiUrl}/player`;
     private url = (import.meta as any).env['NG_APP_API_URL'];
 
     constructor(private readonly http: HttpClient) {}
