@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HoleStats } from '@app/interfaces/hole-stats';
 import { Player, PlayerDuo } from '@app/interfaces/player';
+import { environment } from '../../environments/environment';
 
 interface SavedFoursome {
   id?: number;
@@ -22,7 +23,7 @@ interface SavedFoursome {
 
 export class FoursomeService {
     // private readonly url = `${environment.serverUrl}/player`;
-    private readonly url = `http://localhost:3000/api/foursome/day`;
+    private readonly url = `${environment.apiUrl}/foursome/day`;
 
     constructor(private readonly http: HttpClient) {}
     getFoursomeByDay(day: number) {

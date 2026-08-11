@@ -5,6 +5,7 @@ client/tmp/
 client/coverage/
 client/e2e/test-output/
 client/.angular/
+client/src/environments/
 .angular/
 
 # Node modules and dependency files
