@@ -191,3 +191,118 @@
   font-style: italic;
   padding: 8px 0;
 }
+/* Global Team Score Banner */
+.global-score-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.team-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.blue-team {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+.white-team {
+  background-color: #f9fafb;
+  border: 1px solid var(--border-color);
+  color: #374151;
+}
+
+.team-score.leading {
+  box-shadow: 0 0 0 2px var(--primary-green);
+}
+
+.team-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.score-number {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pts-text {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.score-vs {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-muted);
+  padding: 0 12px;
+}
+
+/* Team color dots next to players */
+.team-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.dot-blue {
+  background-color: #2563eb;
+}
+
+.dot-white {
+  background-color: #d1d5db;
+  border: 1px solid #9ca3af;
+}
+.page-header {
+  margin-bottom: 2rem;
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #1b6644;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #155236;
+      text-decoration: underline;
+    }
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: #607369;
+    font-size: 1rem;
+    margin: 0;
+  }
+}

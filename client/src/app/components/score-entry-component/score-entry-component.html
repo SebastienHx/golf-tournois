@@ -65,6 +65,7 @@
   <!-- Hole Selector Bar -->
   <div class="hole-selector">
     <button 
+      #holeBtn
       *ngFor="let hole of holes" 
       class="hole-btn" 
       [class.active]="hole.number === selectedHoleNum"
@@ -100,7 +101,7 @@
           <polyline points="3 6 5 6 21 6"></polyline>
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
         </svg>
-        Clear
+        Effacer
       </button>
     </div>
   </div>
@@ -119,7 +120,9 @@
         </option>
       </select>
     </div>
-
+    <div class="drive-requirement" [attr.data-par3]="currentHole.par === 3">
+      {{ driveRequirementLabel }}
+    </div>
     <div class="checkbox-grid">
       <label class="checkbox-label">
         <input
@@ -152,18 +155,15 @@
       />
     </div>
 
-    <div class="drive-requirement" [attr.data-par3]="currentHole.par === 3">
-      {{ driveRequirementLabel }}
-    </div>
   </div>
 
   <!-- Navigation Buttons -->
   <div class="navigation-bar">
     <button class="nav-btn" [disabled]="selectedHoleNum === 1" (click)="prevHole()">
-      ‹ Prev
+      ‹ Préc.
     </button>
     <button class="nav-btn" [disabled]="selectedHoleNum === holes.length" (click)="nextHole()">
-      Next ›
+      Prochain ›
     </button>
   </div>
 </div>

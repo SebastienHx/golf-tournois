@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FIELD_INFO_2026 } from '@app/constants/terrain-golf-info-2026';
 import { HoleStats } from '@app/interfaces/hole-stats';
@@ -31,16 +31,19 @@ type DriveCounterField =
   templateUrl: './score-entry-component.html',
   styleUrls: ['./score-entry-component.scss'],
 })
-export class ScoreEntryComponent implements OnInit {
+export class ScoreEntryComponent implements OnInit, AfterViewInit {
   readonly dayStorageKey = 'golf-board-selected-day';
+  holeNumberKey = 'golf-hole-number'
   readonly teamStorageKeyPrefix = 'golf-board-selected-team';
 
   holes: HoleInfo[] = [];
 
   selectedTeamId = '';
-  selectedHoleNum = 1;
+  selectedHoleNum = this.getHoleNumber();
   duoList: ScoreDuo[] = [];
   selectedDay = this.getStoredDay();
+
+  @ViewChildren('holeBtn') holeBtnElements!: QueryList<ElementRef<HTMLButtonElement>>;
 
   private foursomes: Array<{
     id?: number;
@@ -63,17 +66,62 @@ export class ScoreEntryComponent implements OnInit {
     this.loadDayFoursomes();
   }
 
+  ngAfterViewInit(): void {
+    // Scroll initial active hole into view on load
+    this.centerSelectedHole();
+  }
+  
+
+  private centerSelectedHole(): void {
+    if (!this.holeBtnElements) return;
+
+    // Find the DOM element corresponding to the active hole index
+    const activeIndex = this.holes.findIndex(h => h.number === this.selectedHoleNum);
+    const activeBtn = this.holeBtnElements.toArray()[activeIndex];
+
+    if (activeBtn?.nativeElement) {
+      activeBtn.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',  // Centers the button horizontally within its scroll container
+        block: 'nearest'
+      });
+    }
+  }
+
   selectDay(day: number): void {
     this.selectedDay = day;
     this.selectedTeamId = '';
     this.duoList = [];
     localStorage.setItem(this.dayStorageKey, String(day));
+    this.selectHoleAfterDayChange();
     this.loadDayFoursomes();
+  }
+
+  selectHoleAfterDayChange(): void {
+    this.selectedHoleNum = Number(localStorage.getItem(`${this.holeNumberKey}-${this.getStoredDay()}`)) ?? 1;
+    // Give Angular time to re-render the active class before auto-scrolling
+    setTimeout(() => {
+      this.centerSelectedHole();
+    });
+  }
+
+  selectHole(holeNum: number): void {
+    this.selectedHoleNum = holeNum;
+    localStorage.setItem(`${this.holeNumberKey}-${this.getStoredDay()}`, String(holeNum));
+    // Give Angular time to re-render the active class before auto-scrolling
+    setTimeout(() => {
+      this.centerSelectedHole();
+    });
   }
 
   private getStoredDay(): number {
     const savedDay = Number(localStorage.getItem(this.dayStorageKey));
     return savedDay === 1 || savedDay === 2 ? savedDay : 1;
+  }
+
+  private getHoleNumber(): number {
+    const savedHoleNumber = Number(localStorage.getItem(`${this.holeNumberKey}-${this.getStoredDay()}`));
+    return savedHoleNumber ?? 1;
   }
 
   private getStoredTeamId(): string {
@@ -177,10 +225,6 @@ export class ScoreEntryComponent implements OnInit {
 
     const takenDrives = this.getPlayerDriveCount(selectedPlayer, this.currentHole.par >= 4);
     return `${takenDrives} pris sur ${requiredDrives} requis`;
-  }
-
-  selectHole(holeNum: number): void {
-    this.selectedHoleNum = holeNum;
   }
 
   prevHole(): void {

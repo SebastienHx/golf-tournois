@@ -68,9 +68,9 @@ export class FoursomeComponent {
         const diff = this.duo2.totalScore - this.duo1.totalScore;
 
         if (diff > 0) {
-            return `BLUE -${diff}`;
+            return `BLEU mène de -${diff}pts.`;
         } else if (diff < 0) {
-            return `WHITE -${Math.abs(diff)}`;
+            return `BLANC mène de -${Math.abs(diff)}pts.`;
         }
         return 'ÉGALITÉ';
     }

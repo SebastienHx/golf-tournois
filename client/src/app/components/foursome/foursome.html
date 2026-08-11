@@ -18,7 +18,7 @@
     <div class="duo-row row-blue" (click)="openDetails(duo1)">
       <div class="score-block-wrapper">
         <div class="score-block team-blue-bg">
-          <span class="team-label text-blue">BLUE</span>
+          <span class="team-label text-blue">BLEU</span>
           <span class="score-val" [ngClass]="getScoreClass(duo1.totalScore+duo1.handicap)">
             {{ formatScore(duo1.totalScore, duo1) }}
           </span>
@@ -45,7 +45,7 @@
     <div class="duo-row row-white" (click)="openDetails(duo2)">
       <div class="score-block-wrapper">
         <div class="score-block team-white-bg">
-          <span class="team-label text-white">WHITE</span>
+          <span class="team-label text-white">BLANC</span>
           <span class="score-val" [ngClass]="getScoreClass(duo2.totalScore+duo2.handicap)">
             {{ formatScore(duo2.totalScore, duo2) }}
           </span>

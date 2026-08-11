@@ -2,7 +2,9 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FoursomeService } from '@app/services/foursome.service';
 import { Player, PlayerDuo } from '@app/interfaces/player';
+import { TeamEnum } from '@app/interfaces/team';
 import { HoleStats } from '@app/interfaces/hole-stats';
+import { RouterLink } from '@angular/router';
 
 export interface LeaderboardEntry {
   duoName: string;
@@ -10,19 +12,31 @@ export interface LeaderboardEntry {
   player2: string;
   statValue: string;
   numericVal: number;
+  teamColor: TeamEnum;
+  isWinner?: boolean; // Added to highlight winners in head-to-head matchups
+}
+
+export interface FoursomeMatchup {
+  foursomeId: string | number;
+  whiteDuo: LeaderboardEntry;
+  blueDuo: LeaderboardEntry;
 }
 
 export interface ChallengeStats {
+  blueTeamPoints: number;
+  whiteTeamPoints: number;
   leastPutts: LeaderboardEntry[];
   mostHazards: LeaderboardEntry[];
-  bestScore: LeaderboardEntry[];
+  bestScoreMatchups: FoursomeMatchup[]; // Grouped by foursome match-up
   mostOnFairway: LeaderboardEntry[];
 }
 
 interface ProcessedDuo {
+  foursomeId?: string | number;
   duoName: string;
   player1Name: string;
   player2Name: string;
+  teamColor: TeamEnum;
   totalPutts: number;
   totalHazards: number;
   onFairwayCount: number;
@@ -32,7 +46,7 @@ interface ProcessedDuo {
 @Component({
   selector: 'app-admin-leaderboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './admin-leaderboard.html',
   styleUrls: ['./admin-leaderboard.scss']
 })
@@ -40,6 +54,7 @@ export class AdminLeaderboardComponent implements OnInit {
   selectedDay: 1 | 2 = 1;
   isLoading: boolean = false;
   errorMessage: string | null = null;
+  TeamEnum = TeamEnum;
 
   day1Stats: ChallengeStats = this.getEmptyStats();
   day2Stats: ChallengeStats = this.getEmptyStats();
@@ -91,65 +106,104 @@ export class AdminLeaderboardComponent implements OnInit {
       return this.getEmptyStats();
     }
 
-    const duos: ProcessedDuo[] = [];
+    const allDuos: ProcessedDuo[] = [];
+    const bestScoreMatchups: FoursomeMatchup[] = [];
 
-    foursomes.forEach((foursome) => {
-      if (foursome.whitePlayers || foursome.whiteStats) {
-        duos.push(this.extractDuoMetrics(foursome.whitePlayers, foursome.whiteStats, foursome.whiteScore));
+    let bluePoints = 0;
+    let whitePoints = 0;
+
+    // 1. Extract duos & evaluate head-to-head match-ups per foursome
+    foursomes.forEach((foursome, index) => {
+      const fId = foursome.id ?? index + 1;
+      
+      const whiteDuo = this.extractDuoMetrics(
+        foursome.whitePlayers, 
+        foursome.whiteStats, 
+        TeamEnum.WHITE, 
+        foursome.whiteScore, 
+        fId
+      );
+      
+      const blueDuo = this.extractDuoMetrics(
+        foursome.bluePlayers, 
+        foursome.blueStats, 
+        TeamEnum.BLUE, 
+        foursome.blueScore, 
+        fId
+      );
+
+      allDuos.push(whiteDuo, blueDuo);
+
+      const whiteEntry = this.toLeaderboardEntry(whiteDuo, `${whiteDuo.totalScore}`, whiteDuo.totalScore);
+      const blueEntry = this.toLeaderboardEntry(blueDuo, `${blueDuo.totalScore}`, blueDuo.totalScore);
+
+      // Evaluate 3 Points per Foursome Matchup Winner (Ties award 3 pts to both)
+      if (whiteDuo.totalScore < blueDuo.totalScore) {
+        whitePoints += 3;
+        whiteEntry.isWinner = true;
+      } else if (blueDuo.totalScore < whiteDuo.totalScore) {
+        bluePoints += 3;
+        blueEntry.isWinner = true;
+      } else {
+        whitePoints += 3;
+        bluePoints += 3;
+        whiteEntry.isWinner = true;
+        blueEntry.isWinner = true;
       }
-      if (foursome.bluePlayers || foursome.blueStats) {
-        duos.push(this.extractDuoMetrics(foursome.bluePlayers, foursome.blueStats, foursome.blueScore));
-      }
+
+      bestScoreMatchups.push({
+        foursomeId: fId,
+        whiteDuo: whiteEntry,
+        blueDuo: blueEntry
+      });
     });
 
+    // 2. Process global stats for other categories
+    const leastPutts = [...allDuos]
+      .sort((a, b) => a.totalPutts - b.totalPutts)
+      .map(d => this.toLeaderboardEntry(d, `${d.totalPutts} Putts`, d.totalPutts));
+
+    const mostHazards = [...allDuos]
+      .sort((a, b) => b.totalHazards - a.totalHazards)
+      .map(d => this.toLeaderboardEntry(d, `${d.totalHazards} Eau/Sable`, d.totalHazards));
+
+    const mostOnFairway = [...allDuos]
+      .sort((a, b) => b.onFairwayCount - a.onFairwayCount)
+      .map(d => this.toLeaderboardEntry(d, `${d.onFairwayCount} Coups`, d.onFairwayCount));
+
+    // 3. Award 1 Point for category ties & winners
+    const awardCategoryPoints = (entries: LeaderboardEntry[]) => {
+      if (entries.length === 0) return;
+      const topScore = entries[0].numericVal;
+      entries.forEach(entry => {
+        if (entry.numericVal === topScore) {
+          if (entry.teamColor === TeamEnum.BLUE) bluePoints += 1;
+          else if (entry.teamColor === TeamEnum.WHITE) whitePoints += 1;
+        }
+      });
+    };
+
+    awardCategoryPoints(leastPutts);
+    awardCategoryPoints(mostHazards);
+    awardCategoryPoints(mostOnFairway);
+
     return {
-      // 1. Least Putts: Sorted ASC (Lowest putts first)
-      leastPutts: [...duos]
-        .sort((a, b) => a.totalPutts - b.totalPutts)
-        .map(d => ({
-          duoName: d.duoName,
-          player1: d.player1Name,
-          player2: d.player2Name,
-          statValue: `${d.totalPutts} Putts`,
-          numericVal: d.totalPutts
-        })),
-
-      // 2. Most Hazards: Sorted DESC (Highest hazards first)
-      mostHazards: [...duos]
-        .sort((a, b) => b.totalHazards - a.totalHazards)
-        .map(d => ({
-          duoName: d.duoName,
-          player1: d.player1Name,
-          player2: d.player2Name,
-          statValue: `${d.totalHazards} Hazards`,
-          numericVal: d.totalHazards
-        })),
-
-      // 3. Best Score: Sorted ASC (Lowest stroke total first)
-      bestScore: [...duos]
-        .sort((a, b) => a.totalScore - b.totalScore)
-        .map(d => ({
-          duoName: d.duoName,
-          player1: d.player1Name,
-          player2: d.player2Name,
-          statValue: `${d.totalScore}`,
-          numericVal: d.totalScore
-        })),
-
-      // 4. Most On Fairway: Sorted DESC (Highest fairway hits first)
-      mostOnFairway: [...duos]
-        .sort((a, b) => b.onFairwayCount - a.onFairwayCount)
-        .map(d => ({
-          duoName: d.duoName,
-          player1: d.player1Name,
-          player2: d.player2Name,
-          statValue: `${d.onFairwayCount} Hit`,
-          numericVal: d.onFairwayCount
-        }))
+      blueTeamPoints: bluePoints,
+      whiteTeamPoints: whitePoints,
+      leastPutts,
+      mostHazards,
+      bestScoreMatchups,
+      mostOnFairway
     };
   }
 
-  private extractDuoMetrics(playersData: any, statsData: HoleStats[], scoreOverride?: number): ProcessedDuo {
+  private extractDuoMetrics(
+    playersData: any, 
+    statsData: HoleStats[], 
+    teamColor: TeamEnum, 
+    scoreOverride?: number, 
+    foursomeId?: string | number
+  ): ProcessedDuo {
     let player1Name = 'Player 1';
     let player2Name = 'Player 2';
 
@@ -171,23 +225,17 @@ export class AdminLeaderboardComponent implements OnInit {
 
     holes.forEach((hole) => {
       totalPutts += hole.nbrOfPutt || 0;
-
-      if (hole.hasHitInHazard) {
-        totalHazards += 1;
-      }
-
-      // Count Fairway Hits (excluding Par 3s)
-      if (!hole.isPar3 && hole.hasHitInFairway === true) {
-        onFairwayCount += 1;
-      }
-
+      if (hole.hasHitInHazard) totalHazards += 1;
+      if (!hole.isPar3 && hole.hasHitInFairway === true) onFairwayCount += 1;
       calculatedScore += hole.score || 0;
     });
 
     return {
+      foursomeId,
       duoName,
       player1Name,
       player2Name,
+      teamColor,
       totalPutts,
       totalHazards,
       onFairwayCount,
@@ -195,11 +243,24 @@ export class AdminLeaderboardComponent implements OnInit {
     };
   }
 
+  private toLeaderboardEntry(d: ProcessedDuo, statValue: string, numericVal: number): LeaderboardEntry {
+    return {
+      duoName: d.duoName,
+      player1: d.player1Name,
+      player2: d.player2Name,
+      statValue,
+      numericVal,
+      teamColor: d.teamColor
+    };
+  }
+
   private getEmptyStats(): ChallengeStats {
     return {
+      blueTeamPoints: 0,
+      whiteTeamPoints: 0,
       leastPutts: [],
       mostHazards: [],
-      bestScore: [],
+      bestScoreMatchups: [],
       mostOnFairway: []
     };
   }

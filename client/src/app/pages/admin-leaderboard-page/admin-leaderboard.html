@@ -1,3 +1,14 @@
+  <header class="page-header">
+    <a routerLink="/admin-page" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Retour à la page admin
+    </a>
+    <h1>Gestion des joueurs</h1>
+    <p class="subtitle">Ajouter, checker, et gérer les joueurs du tournoi.</p>
+  </header>
 <div class="leaderboard-container">
   <!-- Header Title -->
   <div class="title-header">
@@ -11,19 +22,36 @@
     <span>ADMIN LEADERBOARD</span>
   </div>
 
+  <!-- Team Global Score Banner -->
+  <div class="global-score-card">
+    <div class="team-score blue-team" [class.leading]="currentStats.blueTeamPoints > currentStats.whiteTeamPoints">
+      <span class="team-label">ÉQUIPE BLEU</span>
+      <span class="score-number">{{ currentStats.blueTeamPoints }}</span>
+      <span class="pts-text">pts</span>
+    </div>
+    
+    <div class="score-vs">VS</div>
+    
+    <div class="team-score white-team" [class.leading]="currentStats.whiteTeamPoints > currentStats.blueTeamPoints">
+      <span class="team-label">ÉQUIPE BLANC</span>
+      <span class="score-number">{{ currentStats.whiteTeamPoints }}</span>
+      <span class="pts-text">pts</span>
+    </div>
+  </div>
+
   <!-- Day Switcher Segmented Control -->
   <div class="day-toggle-container">
     <button 
       class="day-btn" 
       [class.active]="selectedDay === 1" 
       (click)="setDay(1)">
-      Day 1
+      Jour 1
     </button>
     <button 
       class="day-btn" 
       [class.active]="selectedDay === 2" 
       (click)="setDay(2)">
-      Day 2
+      Jour 2
     </button>
   </div>
 
@@ -40,7 +68,7 @@
   <!-- Challenge Cards Grid -->
   <div class="challenges-grid" *ngIf="!isLoading && !errorMessage">
     
-    <!-- Challenge 1: Best Score -->
+    <!-- Challenge 1: Best Score Matchups per Foursome -->
     <div class="challenge-card highlight-card">
       <div class="card-header">
         <div class="badge-icon best-score-bg">
@@ -49,11 +77,11 @@
           </svg>
         </div>
         <div>
-          <h3>Meilleur Pointage</h3>
-          <p class="subtitle">Meilleur duo</p>
+          <h3>Meilleur Score par Foursome</h3>
+          <p class="subtitle">+3 pts par duo gagnant par foursome</p>
         </div>
       </div>
-      <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.bestScore }"></ng-container>
+      <ng-container *ngTemplateOutlet="foursomeMatchupList; context: { matchups: currentStats.bestScoreMatchups }"></ng-container>
     </div>
 
     <!-- Challenge 2: Least Putts -->
@@ -67,7 +95,7 @@
         </div>
         <div>
           <h3>Le moins de Putts</h3>
-          <p class="subtitle">Précision sur le vert</p>
+          <p class="subtitle">+1 pt à l'équipe gagnante</p>
         </div>
       </div>
       <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.leastPutts }"></ng-container>
@@ -82,8 +110,8 @@
           </svg>
         </div>
         <div>
-          <h3>Le plus hors-champ</h3>
-          <p class="subtitle">Eau, sable, & pénalités</p>
+          <h3>Le plus de coups de marde</h3>
+          <p class="subtitle">+1 pt à l'équipe gagnante</p>
         </div>
       </div>
       <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.mostHazards }"></ng-container>
@@ -99,8 +127,8 @@
           </svg>
         </div>
         <div>
-          <h3>Le plus sur le Fairway</h3>
-          <p class="subtitle">Fairways réussi sur trous Par 4 & Par 5</p>
+          <h3>Most On Fairway</h3>
+          <p class="subtitle">+1 pt à l'équipe gagnante</p>
         </div>
       </div>
       <ng-container *ngTemplateOutlet="leaderboardList; context: { entries: currentStats.mostOnFairway }"></ng-container>
@@ -109,20 +137,78 @@
   </div>
 </div>
 
-<!-- Reusable Leaderboard List Template -->
-<ng-template #leaderboardList let-entries="entries">
-  <div class="entry-list" *ngIf="entries && entries.length > 0; else emptyState">
-    <div class="entry-item" *ngFor="let entry of entries; let i = index" [class.winner]="i === 0">
-      <div class="rank-badge" [class.rank-1]="i === 0">{{ i + 1 }}</div>
-      <div class="duo-info">
-        <span class="duo-name">{{ entry.player1 }} & {{ entry.player2 }}</span>
+<!-- Foursome Matchup List Template (Best Score Head-to-Head) -->
+<ng-template #foursomeMatchupList let-matchups="matchups">
+  <div class="entry-list" *ngIf="matchups && matchups.length > 0; else emptyState">
+    <div class="foursome-group" *ngFor="let m of matchups; let i = index" style="margin-bottom: 1rem;">
+      <div class="foursome-title" style="font-size: 0.8rem; opacity: 0.75; font-weight: bold; margin-bottom: 0.25rem;">
+        FOURSOME #{{ i+1 }}
       </div>
-      <div class="stat-badge">
-        {{ entry.statValue }}
-      </div>
+      
+      <!-- Blue Duo Item -->
+      <ng-container *ngTemplateOutlet="matchupItem; context: { entry: m.blueDuo }"></ng-container>
+
+      <!-- White Duo Item -->
+      <ng-container *ngTemplateOutlet="matchupItem; context: { entry: m.whiteDuo }"></ng-container>
     </div>
   </div>
   <ng-template #emptyState>
-    <div class="empty-msg">Aucune entrée pour le jour {{ selectedDay }}.</div>
+    <div class="empty-msg">No entries available for Day {{ selectedDay }}.</div>
+  </ng-template>
+</ng-template>
+
+<!-- Individual Matchup Row -->
+<ng-template #matchupItem let-entry="entry">
+  <div class="entry-item" [class.winner]="entry.isWinner">
+    <div class="duo-info">
+      <span class="duo-name">
+        {{ entry.player1 }} & {{ entry.player2 }}
+        <span 
+          class="team-dot" 
+          [class.dot-blue]="entry.teamColor === TeamEnum.BLUE" 
+          [class.dot-white]="entry.teamColor === TeamEnum.WHITE">
+        </span>
+      </span>
+    </div>
+    <div class="stat-badge" style="display: flex; align-items: center; gap: 0.5rem;">
+      <span *ngIf="entry.isWinner" style="font-size: 0.75rem; color: #4caf50; font-weight: bold;">+3 pts</span>
+      <span>{{ entry.statValue }}</span>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Reusable Global Leaderboard List Template -->
+<ng-template #leaderboardList let-entries="entries">
+  <div class="entry-list" *ngIf="entries && entries.length > 0; else emptyState">
+    <div 
+      class="entry-item" 
+      *ngFor="let entry of entries; let i = index" 
+      [class.winner]="entry.numericVal === entries[0].numericVal">
+      <div 
+        class="rank-badge" 
+        [class.rank-1]="entry.numericVal === entries[0].numericVal">
+        {{ i + 1 }}
+      </div>
+      <div class="duo-info">
+        <span class="duo-name">
+          {{ entry.player1 }} & {{ entry.player2 }}
+          <span 
+            class="team-dot" 
+            [class.dot-blue]="entry.teamColor === TeamEnum.BLUE" 
+            [class.dot-white]="entry.teamColor === TeamEnum.WHITE">
+          </span>
+        </span>
+      </div>
+      <div class="stat-badge" style="display: flex; align-items: center; gap: 0.5rem;">
+        <!-- <span *ngIf="entry.numericVal === entries[0].numericVal" style="font-size: 0.75rem; color: #4caf50; font-weight: bold;">+1 pts</span> -->
+        <span>{{ entry.statValue }}</span>
+      </div>
+      <!-- <div class="stat-badge">
+        {{ entry.statValue }}
+      </div> -->
+    </div>
+  </div>
+  <ng-template #emptyState>
+    <div class="empty-msg">No entries available for Day {{ selectedDay }}.</div>
   </ng-template>
 </ng-template>

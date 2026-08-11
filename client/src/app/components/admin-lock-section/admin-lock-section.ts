@@ -17,7 +17,7 @@ export class AdminLockSection {
   isUnlocked = signal<boolean>(false);
 
   // Correct password from the hint
-  private readonly CORRECT_PASSWORD = 'golf2025';
+  private readonly CORRECT_PASSWORD = 'golf';
 
   unlock(): void {
     if (this.password() === this.CORRECT_PASSWORD) {
