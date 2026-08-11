@@ -6,7 +6,7 @@ import { Player, PlayerDuo } from '@app/interfaces/player';
     providedIn: 'root',
 })
 export class PlayerService {
-    private url = (import.meta as any).env['NG_APP_API_URL'];
+    private url = `${(import.meta as any).env['NG_APP_API_URL']}/player`; ;
 
     constructor(private readonly http: HttpClient) {}
     getAllPlayers() {

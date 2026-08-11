@@ -15,12 +15,13 @@ interface SavedFoursome {
   blueStats?: any[];
 }
 
+// import { environment } from 'src/environments/environment'; //TODO: ADD ENV FILE
 @Injectable({
     providedIn: 'root',
 })
 
 export class FoursomeService {
-    private url = (import.meta as any).env['NG_APP_API_URL'];
+    private url = `${(import.meta as any).env['NG_APP_API_URL']}/day` ;
     constructor(private readonly http: HttpClient) {}
     getFoursomeByDay(day: number) {
         return this.http.get<SavedFoursome[]>(`${this.url}/${day}`);
