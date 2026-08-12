@@ -24,7 +24,7 @@ rules: RuleSection[] = [
       isOpen: true, // Default open first section
       content: [
         'Le tournoi se déroule sur 2 jours, avec un changement de foursome à la fin de la première journée.',
-        'Les équipes sont les BLANCS ⚪ vs les BLEUS 🔵.',
+        'Les équipes sont les BLANC ⚪ vs les BLEU 🔵.',
         'Chaque foursome contient un duo de chaque équipe.',
         'Les scores sont enregistrés et se mettent à jour en direct sur cette application.'
       ]
@@ -46,7 +46,7 @@ rules: RuleSection[] = [
       icon: '📊',
       isOpen: false,
       content: [
-        'Le poitange de chaque duo est affiché sur le leaderboard principal.',
+        'Le poitange de chaque duo est affiché sur le classement principal.',
         'Les joueurs doivent enregistrer leurs statistiques pour chaque trou : score total, nombre de putts, de coups sur le fairway et de pénalités pour obstacles.',
         'Sur votre carte de score numérique, les birdies (sous le par) sont surlignés en vert, tandis que les bogeys (au-dessus du par) sont surlignés en rouge.'
       ]
