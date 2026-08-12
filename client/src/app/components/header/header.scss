@@ -67,12 +67,14 @@
 /* 2. Main Title */
 .event-title {
   color: var(--text-primary);
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
   margin-top: 0;
   margin-bottom: 0.3rem;
   letter-spacing: -0.02em;
-  
+  line-height: 1.15;
+  text-align: center;
+  text-wrap: balance;
   /* Slight compression to match the reference look */
   font-stretch: condensed; 
 }
