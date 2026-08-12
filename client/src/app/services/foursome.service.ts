@@ -40,6 +40,10 @@ export class FoursomeService {
         return this.http.post<Player>(`${this.url}/new`, playerInfo);
     }
 
+    resetTournamentScore(){
+        return this.http.delete<Player>(`${this.url}`);
+    }
+
     deletePlayer(playerId: any){
         return this.http.delete<Player>(`${this.url}/${playerId}`);
     }

@@ -70,7 +70,31 @@
 
     </article>
   </section>
+
+    <div class="admin-actions">
+    <div class="reset-action-group">
+      <button 
+        type="button" 
+        class="btn-reset-danger" 
+        [class.confirming]="confirmResetMode"
+        [disabled]="isResetting"
+        (click)="handleResetClick()">
+        <span *ngIf="!confirmResetMode && !isResetting">Reset les Scores</span>
+        <span *ngIf="confirmResetMode && !isResetting">Confirmer le reset?</span>
+        <span *ngIf="isResetting">Suppression des scores...</span>
+      </button>
+    
+      <button 
+        *ngIf="confirmResetMode && !isResetting" 
+        type="button" 
+        class="btn-cancel" 
+        (click)="cancelReset()">
+        Cancel
+      </button>
+    </div>
+  </div>
 </div>
+
 
 <div class="player-modal-backdrop" *ngIf="activePicker()" (click)="closePicker()">
   <div class="player-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
@@ -95,5 +119,6 @@
       <p class="empty-state">Pas de joueur disponible pour cette équipe.</p>
     </ng-template>
   </div>
+
 </div>
 

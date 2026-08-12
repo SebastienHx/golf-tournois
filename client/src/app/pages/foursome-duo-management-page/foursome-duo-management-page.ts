@@ -262,5 +262,40 @@ export class FoursomeDuoManagementPage {
   getFoursomesForSelectedDay(): FoursomeDraft[] {
     return this.foursomesByDay()[this.selectedDay()];
   }
+
+  isResetting = false;
+  confirmResetMode = false;
+
+  handleResetClick(): void {
+    if (this.isResetting) return;
+
+    if (!this.confirmResetMode) {
+      this.confirmResetMode = true;
+    } else {
+      this.executeReset();
+    }
+  }
+
+  cancelReset(): void {
+    this.confirmResetMode = false;
+  }
+
+  private executeReset(): void {
+    this.isResetting = true;
+    
+    // Call your tournament service method here
+    this.foursomeService.resetTournamentScore().subscribe({
+      next: () => {
+        this.isResetting = false;
+        this.confirmResetMode = false;
+        // Optionally trigger a leaderboard refresh or show success toast
+      },
+      error: (err) => {
+        this.isResetting = false;
+        this.confirmResetMode = false;
+        console.error('Failed to reset tournament scores:', err);
+      }
+    });
+  }
 }
 

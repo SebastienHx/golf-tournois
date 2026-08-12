@@ -94,5 +94,20 @@ export class FoursomeController {
                 res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorMessage);
             }
         });
+
+        //Deletes all tournament score data
+        this.router.delete('/day', async (req: Request, res: Response) => {
+            try {
+                await this.foursomeService.resetAllScores();
+                res.status(StatusCodes.OK).json();
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : 'Internal Server Error';
+                const errorMessage = {
+                    title: 'Error',
+                    body: message,
+                };
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorMessage);
+            }
+        });
     }
 }

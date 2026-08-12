@@ -103,4 +103,33 @@ export class FoursomeService {
 
         return { day, foursomes: nextFoursomes };
     }
+
+    async resetAllScores(): Promise<void> {
+      await this.collection.updateMany(
+        { day: { $in: [1, 2] } }, // Targets both day 1 and day 2 documents
+        {
+          $set: {
+            // Resets scores and empties stats for ALL foursomes on both days
+            'foursomes.$[].whiteScore': 0,
+            'foursomes.$[].blueScore': 0,
+            'foursomes.$[].whiteStats': [],
+            'foursomes.$[].blueStats': [],
+
+            // Resets player drive counters across all foursomes
+            'foursomes.$[].whitePlayers.$[].driveTakenDay1': 0,
+            'foursomes.$[].whitePlayers.$[].drivePar3TakenDay1': 0,
+            'foursomes.$[].whitePlayers.$[].driveTakenDay2': 0,
+            'foursomes.$[].whitePlayers.$[].drivePar3TakenDay2': 0,
+
+            'foursomes.$[].bluePlayers.$[].driveTakenDay1': 0,
+            'foursomes.$[].bluePlayers.$[].drivePar3TakenDay1': 0,
+            'foursomes.$[].bluePlayers.$[].driveTakenDay2': 0,
+            'foursomes.$[].bluePlayers.$[].drivePar3TakenDay2': 0,
+
+            updatedAt: new Date()
+          }
+        }
+      );
+      return;
+    }
 }
