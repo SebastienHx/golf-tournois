@@ -76,7 +76,7 @@ export class ScoreEntryComponent implements OnInit, AfterViewInit {
     if (!this.holeBtnElements) return;
 
     // Find the DOM element corresponding to the active hole index
-    const activeIndex = this.holes.findIndex(h => h.number === this.selectedHoleNum);
+    const activeIndex = this.holes.findIndex(h => h.number === (this.selectedHoleNum > 0 ? this.selectedHoleNum : 1));
     const activeBtn = this.holeBtnElements.toArray()[activeIndex];
 
     if (activeBtn?.nativeElement) {
@@ -106,7 +106,7 @@ export class ScoreEntryComponent implements OnInit, AfterViewInit {
   }
 
   selectHole(holeNum: number): void {
-    this.selectedHoleNum = holeNum;
+    this.selectedHoleNum = holeNum > 0 ? holeNum : 1;
     localStorage.setItem(`${this.holeNumberKey}-${this.getStoredDay()}`, String(holeNum));
     // Give Angular time to re-render the active class before auto-scrolling
     setTimeout(() => {
@@ -121,7 +121,7 @@ export class ScoreEntryComponent implements OnInit, AfterViewInit {
 
   private getHoleNumber(): number {
     const savedHoleNumber = Number(localStorage.getItem(`${this.holeNumberKey}-${this.getStoredDay()}`));
-    return savedHoleNumber ?? 1;
+    return savedHoleNumber && savedHoleNumber > 0 ? savedHoleNumber : 1;
   }
 
   private getStoredTeamId(): string {
@@ -415,6 +415,8 @@ export class ScoreEntryComponent implements OnInit, AfterViewInit {
     }
 
     const nextStats = [...team.stats];
+    this.selectedHoleNum = this.selectedHoleNum > 0 ? this.selectedHoleNum : 1;
+
     const holeIndex = nextStats.findIndex((hole) => hole.holeNumber === this.selectedHoleNum);
     const existingHole = nextStats[holeIndex] ?? {
       holeNumber: this.selectedHoleNum,

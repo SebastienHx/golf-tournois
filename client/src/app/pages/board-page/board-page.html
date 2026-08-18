@@ -24,13 +24,14 @@
   <div class="global-team-summary" aria-label="Global team score summary">
     <div class="team-summary blue-team">
       <span class="team-name">Score des Bleu</span>
-      <strong>{{ getGlobalTeamSummary(TeamEnum.BLUE).score }}</strong>
+      <strong>{{ getGlobalTeamSummary(TeamEnum.BLUE).score }}</strong> 
       <small>Trou {{ getGlobalTeamSummary(TeamEnum.BLUE).calculatedHole || 0 }}</small>
     </div>
 
     <div class="team-summary white-team">
       <span class="team-name">Score des Blanc</span>
-      <strong>{{ getGlobalTeamSummary(TeamEnum.WHITE).score }}</strong>
+      <!-- WHITE TEAM HANDICAP -->
+      <strong>{{ getGlobalTeamSummary(TeamEnum.WHITE).score+4 }}</strong>
       <small>Trou {{ getGlobalTeamSummary(TeamEnum.WHITE).calculatedHole || 0 }}</small>
     </div>
   </div>

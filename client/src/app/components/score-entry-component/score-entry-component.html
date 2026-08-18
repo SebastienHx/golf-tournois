@@ -39,131 +39,134 @@
     <span class="dropdown-arrow">▼</span>
   </div>
 
-  <!-- Summary Stats Box -->
-  <div class="summary-card">
-    <div class="summary-item">
-      <span class="summary-label">FRONT</span>
-      <span class="summary-value">{{ frontNineTotal }}</span>
-    </div>
-    <div class="summary-divider"></div>
-    <div class="summary-item">
-      <span class="summary-label">BACK</span>
-      <span class="summary-value">{{ backNineTotal }}</span>
-    </div>
-    <div class="summary-divider"></div>
-    <div class="summary-item">
-      <span class="summary-label">TOTAL</span>
-      <span class="summary-value">{{ totalScore }}</span>
-    </div>
-    <div class="summary-divider"></div>
-    <div class="summary-item">
-      <span class="summary-label">TO PAR</span>
-      <span class="summary-value to-par-value">{{ toPar }}</span>
-    </div>
-  </div>
 
-  <!-- Hole Selector Bar -->
-  <div class="hole-selector">
-    <button 
-      #holeBtn
-      *ngFor="let hole of holes" 
-      class="hole-btn" 
-      [class.active]="hole.number === selectedHoleNum"
-      (click)="selectHole(hole.number)">
-      {{ hole.number }}
-    </button>
-  </div>
-
-  <!-- Main Score Box -->
-  <div class="hole-card">
-    <div class="hole-card-header">
-      <div class="hole-badge">{{ currentHole.number }}</div>
-      <div class="hole-info">
-        <div class="par-text">Par {{ currentHole.par }}</div>
-        <div class="yards-text">{{ currentHole.yards }} yds</div>
+  <div *ngIf="selectedTeamId !=''">
+    <!-- Summary Stats Box -->
+    <div class="summary-card">
+      <div class="summary-item">
+        <span class="summary-label">FRONT</span>
+        <span class="summary-value">{{ frontNineTotal }}</span>
       </div>
-      <div class="score-label">{{ scoreLabel }}</div>
-    </div>
-
-    <!-- Stepper Controls -->
-    <div class="stepper-container">
-      <button class="step-btn" (click)="decrementScore()">−</button>
-      <div class="score-display">
-        {{ currentScore !== null ? currentScore : '-' }}
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">BACK</span>
+        <span class="summary-value">{{ backNineTotal }}</span>
       </div>
-      <button class="step-btn" (click)="incrementScore()">+</button>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">TOTAL</span>
+        <span class="summary-value">{{ totalScore }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="summary-label">TO PAR</span>
+        <span class="summary-value to-par-value">{{ toPar }}</span>
+      </div>
     </div>
 
-    <!-- Clear Action -->
-    <div class="clear-container">
-      <button class="clear-btn" (click)="clearScore()">
-        <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-        Effacer
+    <!-- Hole Selector Bar -->
+    <div class="hole-selector">
+      <button 
+        #holeBtn
+        *ngFor="let hole of holes" 
+        class="hole-btn" 
+        [class.active]="hole.number === (selectedHoleNum > 0 ? selectedHoleNum : 1)"
+        (click)="selectHole(hole.number)">
+        {{ hole.number }}
       </button>
     </div>
-  </div>
 
-  <div class="hole-extra-fields">
-    <div class="field-row">
-      <label class="field-label" for="drive-taken-by">Drive prise par</label>
-      <select
-        id="drive-taken-by"
-        class="field-input"
-        [ngModel]="currentHoleStats?.driveTakenBy ?? ''"
-        (ngModelChange)="updateHoleField('driveTakenBy', $event)">
-        <option value="">Sélectionner un joueur...</option>
-        <option *ngFor="let player of currentTeamPlayers" [value]="player.id">
-          {{ player.name }}
-        </option>
-      </select>
+    <!-- Main Score Box -->
+    <div class="hole-card">
+      <div class="hole-card-header">
+        <div class="hole-badge">{{ currentHole.number }}</div>
+        <div class="hole-info">
+          <div class="par-text">Par {{ currentHole.par }}</div>
+          <div class="yards-text">{{ currentHole.yards }} yds</div>
+        </div>
+        <div class="score-label">{{ scoreLabel }}</div>
+      </div>
+
+      <!-- Stepper Controls -->
+      <div class="stepper-container">
+        <button class="step-btn" (click)="decrementScore()">−</button>
+        <div class="score-display">
+          {{ currentScore !== null ? currentScore : '-' }}
+        </div>
+        <button class="step-btn" (click)="incrementScore()">+</button>
+      </div>
+
+      <!-- Clear Action -->
+      <div class="clear-container">
+        <button class="clear-btn" (click)="clearScore()">
+          <svg class="trash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          Effacer
+        </button>
+      </div>
     </div>
-    <div class="drive-requirement" [attr.data-par3]="currentHole.par === 3">
-      {{ driveRequirementLabel }}
-    </div>
-    <div class="checkbox-grid">
-      <label class="checkbox-label">
+
+    <div class="hole-extra-fields">
+      <div class="field-row">
+        <label class="field-label" for="drive-taken-by">Drive prise par</label>
+        <select
+          id="drive-taken-by"
+          class="field-input"
+          [ngModel]="currentHoleStats?.driveTakenBy ?? ''"
+          (ngModelChange)="updateHoleField('driveTakenBy', $event)">
+          <option value="">Sélectionner un joueur...</option>
+          <option *ngFor="let player of currentTeamPlayers" [value]="player.id">
+            {{ player.name }}
+          </option>
+        </select>
+      </div>
+      <div class="drive-requirement" [attr.data-par3]="currentHole.par === 3">
+        {{ driveRequirementLabel }}
+      </div>
+      <div class="checkbox-grid">
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="currentHoleStats?.hasHitInFairway ?? false"
+            (change)="updateHoleField('hasHitInFairway', $any($event.target).checked)"
+          />
+          Drive dans Fairway
+        </label>
+
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="currentHoleStats?.hasHitInHazard ?? false"
+            (change)="updateHoleField('hasHitInHazard', $any($event.target).checked)"
+          />
+          Eau/Sable
+        </label>
+      </div>
+
+      <div class="field-row">
+        <label class="field-label" for="putts-count">Putts</label>
         <input
-          type="checkbox"
-          [checked]="currentHoleStats?.hasHitInFairway ?? false"
-          (change)="updateHoleField('hasHitInFairway', $any($event.target).checked)"
+          id="putts-count"
+          class="field-input number-input"
+          type="number"
+          min="0"
+          [ngModel]="currentHoleStats?.nbrOfPutt ?? 0"
+          (ngModelChange)="updateHoleField('nbrOfPutt', $event)"
         />
-        Fairway
-      </label>
+      </div>
 
-      <label class="checkbox-label">
-        <input
-          type="checkbox"
-          [checked]="currentHoleStats?.hasHitInHazard ?? false"
-          (change)="updateHoleField('hasHitInHazard', $any($event.target).checked)"
-        />
-        Eau/Sable
-      </label>
     </div>
 
-    <div class="field-row">
-      <label class="field-label" for="putts-count">Putts</label>
-      <input
-        id="putts-count"
-        class="field-input number-input"
-        type="number"
-        min="0"
-        [ngModel]="currentHoleStats?.nbrOfPutt ?? 0"
-        (ngModelChange)="updateHoleField('nbrOfPutt', $event)"
-      />
+    <!-- Navigation Buttons -->
+    <div class="navigation-bar">
+      <button class="nav-btn" [disabled]="selectedHoleNum === 1" (click)="prevHole()">
+        ‹ Préc.
+      </button>
+      <button class="nav-btn" [disabled]="selectedHoleNum === holes.length" (click)="nextHole()">
+        Prochain ›
+      </button>
     </div>
-
-  </div>
-
-  <!-- Navigation Buttons -->
-  <div class="navigation-bar">
-    <button class="nav-btn" [disabled]="selectedHoleNum === 1" (click)="prevHole()">
-      ‹ Préc.
-    </button>
-    <button class="nav-btn" [disabled]="selectedHoleNum === holes.length" (click)="nextHole()">
-      Prochain ›
-    </button>
   </div>
 </div>
