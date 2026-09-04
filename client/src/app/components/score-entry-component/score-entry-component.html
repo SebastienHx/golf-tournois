@@ -91,7 +91,7 @@
       <div class="stepper-container">
         <button class="step-btn" (click)="decrementScore()">−</button>
         <div class="score-display">
-          {{ currentScore !== null ? currentScore : '-' }}
+          {{ currentScore !== null ? currentScore : 0 }}
         </div>
         <button class="step-btn" (click)="incrementScore()">+</button>
       </div>
