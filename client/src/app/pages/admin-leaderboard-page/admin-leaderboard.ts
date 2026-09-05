@@ -13,6 +13,7 @@ export interface LeaderboardEntry {
   statValue: string;
   numericVal: number;
   teamColor: TeamEnum;
+  hasRespectedMinDrive?: boolean;
   isWinner?: boolean; // Added to highlight winners in head-to-head matchups
 }
 
@@ -41,6 +42,7 @@ interface ProcessedDuo {
   totalHazards: number;
   onFairwayCount: number;
   totalScore: number;
+  hasRespectedMinDrive: boolean;
 }
 
 @Component({
@@ -101,6 +103,9 @@ export class AdminLeaderboardComponent implements OnInit {
     });
   }
 
+  private hasMinDriveTaken(driveTaken: number, drivePar3Taken: number){
+    return driveTaken >= 4 && drivePar3Taken >=2
+  }
   private calculateChallengeStats(foursomes: any[]): ChallengeStats {
     if (!foursomes || foursomes.length === 0) {
       return this.getEmptyStats();
@@ -111,7 +116,6 @@ export class AdminLeaderboardComponent implements OnInit {
 
     let bluePoints = 0;
     let whitePoints = 0;
-
     // 1. Extract duos & evaluate head-to-head match-ups per foursome
     foursomes.forEach((foursome, index) => {
       const fId = foursome.id ?? index + 1;
@@ -120,6 +124,7 @@ export class AdminLeaderboardComponent implements OnInit {
         foursome.whitePlayers, 
         foursome.whiteStats, 
         TeamEnum.WHITE, 
+        foursome.whiteHandicap,
         foursome.whiteScore, 
         fId
       );
@@ -128,6 +133,7 @@ export class AdminLeaderboardComponent implements OnInit {
         foursome.bluePlayers, 
         foursome.blueStats, 
         TeamEnum.BLUE, 
+        foursome.blueHandicap,
         foursome.blueScore, 
         fId
       );
@@ -201,6 +207,7 @@ export class AdminLeaderboardComponent implements OnInit {
     playersData: any, 
     statsData: HoleStats[], 
     teamColor: TeamEnum, 
+    handicap: number,
     scoreOverride?: number, 
     foursomeId?: string | number
   ): ProcessedDuo {
@@ -214,6 +221,9 @@ export class AdminLeaderboardComponent implements OnInit {
       player1Name = playersData.player1?.name || 'Player 1';
       player2Name = playersData.player2?.name || 'Player 2';
     }
+
+    const HasPlayer1MinDriveTaken = this.hasMinDriveTaken(playersData[0]?.driveTakenDay1, playersData[0]?.drivePar3TakenDay1)
+    const HasPlayer2MinDriveTaken = this.hasMinDriveTaken(playersData[1]?.driveTakenDay1, playersData[1]?.drivePar3TakenDay1)
 
     const duoName = `${player1Name} & ${player2Name}`;
     const holes: HoleStats[] = statsData || playersData?.stats || [];
@@ -229,7 +239,7 @@ export class AdminLeaderboardComponent implements OnInit {
       if (!hole.isPar3 && hole.hasHitInFairway === true) onFairwayCount += 1;
       calculatedScore += hole.score || 0;
     });
-
+    
     return {
       foursomeId,
       duoName,
@@ -239,7 +249,8 @@ export class AdminLeaderboardComponent implements OnInit {
       totalPutts,
       totalHazards,
       onFairwayCount,
-      totalScore: scoreOverride ?? calculatedScore
+      totalScore: (scoreOverride ?? calculatedScore) + handicap,
+      hasRespectedMinDrive: HasPlayer1MinDriveTaken && HasPlayer2MinDriveTaken,
     };
   }
 
@@ -250,7 +261,8 @@ export class AdminLeaderboardComponent implements OnInit {
       player2: d.player2Name,
       statValue,
       numericVal,
-      teamColor: d.teamColor
+      teamColor: d.teamColor,
+      hasRespectedMinDrive: d.hasRespectedMinDrive
     };
   }
 

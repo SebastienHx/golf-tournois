@@ -172,6 +172,16 @@
     </div>
     <div class="stat-badge" style="display: flex; align-items: center; gap: 0.5rem;">
       <span *ngIf="entry.isWinner" style="font-size: 0.75rem; color: #4caf50; font-weight: bold;">+3 pts</span>
+      <span
+        *ngIf="entry.hasRespectedMinDrive"
+        class="min-drive-status respected"
+        aria-label="Minimum de drives respecté"
+        title="Minimum de drives respecté">&#10003;</span>
+      <span
+        *ngIf="!entry.hasRespectedMinDrive"
+        class="min-drive-status not-respected"
+        aria-label="Minimum de drives non respecté"
+        title="Minimum de drives non respecté">&#10005;</span>
       <span>{{ entry.statValue }}</span>
     </div>
   </div>

@@ -185,6 +185,19 @@
   color: var(--text-dark);
 }
 
+.min-drive-status {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.min-drive-status.respected {
+  color: #16a34a;
+}
+
+.min-drive-status.not-respected {
+  color: #dc2626;
+}
+
 .empty-msg {
   font-size: 12px;
   color: var(--text-muted);
