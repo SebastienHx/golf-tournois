@@ -213,18 +213,21 @@ export class ScoreEntryComponent implements OnInit, AfterViewInit {
     return this.currentTeamPlayers.find((player) => player.id === playerId);
   }
 
-  get driveRequirementLabel(): string {
+private getDriveRequirementLabel(player: any){
     const requiredDrives = this.currentHole.par >= 4 ? 4 : 2;
-    const selectedPlayer = this.selectedDrivePlayer;
+    const takenDrives = this.getPlayerDriveCount(player, this.currentHole.par >= 4);
+    return `${player.name} a ${takenDrives} pris sur ${requiredDrives} requis`;
+}
 
-    if (!selectedPlayer) {
-      return this.currentHole.par >= 4
-        ? 'Minimum : 4 drives par joueur / jour'
-        : 'Minimum : 2 drives par joueur / jour';
-    }
+  get driveRequirementLabelPlayer1(): string {
+    const player1 = this.currentTeamPlayers[0];
+    return this.getDriveRequirementLabel(player1);
+  }
 
-    const takenDrives = this.getPlayerDriveCount(selectedPlayer, this.currentHole.par >= 4);
-    return `${takenDrives} pris sur ${requiredDrives} requis`;
+  
+  get driveRequirementLabelPlayer2(): string {
+    const player1 = this.currentTeamPlayers[1];
+    return this.getDriveRequirementLabel(player1);
   }
 
   prevHole(): void {
