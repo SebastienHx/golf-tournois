@@ -454,6 +454,7 @@ private getDriveRequirementLabel(player: any){
       const isWhite = team.teamColor === TeamEnum.WHITE;
       const statsKey = isWhite ? 'whiteStats' : 'blueStats';
       const scoreKey = isWhite ? 'whiteScore' : 'blueScore';
+      const playersKey = isWhite ? 'whitePlayers' : 'bluePlayers';
 
       const nextFoursomeStats = [...(foursome[statsKey] ?? [])];
       const statIndex = nextFoursomeStats.findIndex((hole) => hole.holeNumber === this.selectedHoleNum);
@@ -467,10 +468,16 @@ private getDriveRequirementLabel(player: any){
       const total = nextFoursomeStats.reduce((sum, hole) => sum + Number(hole.score ?? 0), 0);
       foursome[scoreKey] = total;
 
-      this.foursomeService.saveFoursomesForDay(this.selectedDay, this.foursomes).subscribe({
-        next: () => undefined,
-        error: (error) => console.error('Failed to save score update', error),
-      });
+      this.foursomeService
+        .saveTeamResult(this.selectedDay, team.foursomeId, isWhite ? 'white' : 'blue', {
+          stats: nextFoursomeStats,
+          score: total,
+          players: foursome[playersKey] ?? [],
+        })
+        .subscribe({
+          next: () => undefined,
+          error: (error) => console.error('Failed to save score update', error),
+        });
     }
   }
 

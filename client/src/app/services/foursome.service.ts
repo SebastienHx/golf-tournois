@@ -31,6 +31,16 @@ export class FoursomeService {
         return this.http.put(`${this.url}/${day}`, { foursomes });
     }
 
+    // Only updates one team of one foursome, so it can't overwrite scores entered by other teams.
+    saveTeamResult(
+        day: number,
+        foursomeId: number,
+        team: 'white' | 'blue',
+        result: { stats: HoleStats[]; score: number; players: Player[] },
+    ) {
+        return this.http.put(`${this.url}/${day}/${foursomeId}/team/${team}`, result);
+    }
+
     getPlayerById(playerId: string) {
         return this.http.get<Player>(`${this.url}/${playerId}`);
     }

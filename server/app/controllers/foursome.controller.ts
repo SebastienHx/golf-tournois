@@ -79,6 +79,38 @@ export class FoursomeController {
             }
         });
 
+        this.router.put('/day/:day/:foursomeId/team/:team', async (req: Request, res: Response) => {
+            try {
+                const day = Number(req.params.day);
+                const foursomeId = Number(req.params.foursomeId);
+                const team = req.params.team;
+                const { stats, score, players } = req.body ?? {};
+
+                if (team !== 'white' && team !== 'blue') {
+                    res.status(StatusCodes.BAD_REQUEST).json({ title: 'Error', body: `Invalid team: ${team}` });
+                    return;
+                }
+                if (!Array.isArray(stats)) {
+                    res.status(StatusCodes.BAD_REQUEST).json({ title: 'Error', body: 'stats must be an array' });
+                    return;
+                }
+
+                const found = await this.foursomeService.saveTeamResult(day, foursomeId, team, { stats, score, players });
+                if (!found) {
+                    res.status(StatusCodes.NOT_FOUND).json({ title: 'Error', body: `Foursome ${foursomeId} not found for day ${day}` });
+                    return;
+                }
+                res.status(StatusCodes.OK).json();
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : 'Internal Server Error';
+                const errorMessage = {
+                    title: 'Error',
+                    body: message,
+                };
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorMessage);
+            }
+        });
+
         this.router.delete('/day/:day/:foursomeId', async (req: Request, res: Response) => {
             try {
                 const day = Number(req.params.day);

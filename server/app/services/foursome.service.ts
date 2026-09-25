@@ -85,6 +85,27 @@ export class FoursomeService {
         return { day, foursomes: nextFoursomes };
     }
 
+    // Atomically updates a single team of a single foursome, so concurrent score entries
+    // from other teams are never overwritten by a stale copy of the whole day.
+    async saveTeamResult(
+        day: number,
+        foursomeId: number,
+        team: 'white' | 'blue',
+        result: { stats: any[]; score: number; players?: any[] },
+    ): Promise<boolean> {
+        const update: Record<string, unknown> = {
+            [`foursomes.$.${team}Stats`]: result.stats,
+            [`foursomes.$.${team}Score`]: Number(result.score ?? 0),
+            updatedAt: new Date(),
+        };
+        if (Array.isArray(result.players)) {
+            update[`foursomes.$.${team}Players`] = result.players;
+        }
+
+        const updateResult = await this.collection.updateOne({ day, 'foursomes.id': foursomeId }, { $set: update });
+        return updateResult.matchedCount > 0;
+    }
+
     async removeFoursome(day: number, foursomeId: number): Promise<any> {
         const document = await this.collection.findOne({ day });
         const foursomes = document?.foursomes ?? [];
